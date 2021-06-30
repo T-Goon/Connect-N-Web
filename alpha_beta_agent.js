@@ -1,4 +1,3 @@
-const { sum } = require('lodash');
 const { Agent } = require('./agent');
 
 class AlphaBetaAgent extends Agent {
@@ -76,7 +75,7 @@ class AlphaBetaAgent extends Agent {
      * @returns The summed score for tokens 't' on the board.
      */
     count_all(board, token) {
-        sum = 0;
+        let sum = 0;
 
         // Go through all spaces on the board
         for (let i = 0; i < board.height; i++) {
@@ -101,7 +100,7 @@ class AlphaBetaAgent extends Agent {
      */
     token_score(board, x, y, token) {
         // Look in all 8 directions for 0 tokens and 'token' tokens
-        sum = 0
+        let sum = 0
 
         sum += this.count_line(board, x, y, 0, 1, token); // Up
         sum += this.count_line(board, x, y, 1, 1, token); // Diagonal Up Right
@@ -111,6 +110,49 @@ class AlphaBetaAgent extends Agent {
         sum += this.count_line(board, x, y, -1, -1, token); // Diagonal Down Left
         sum += this.count_line(board, x, y, -1, 0, token); // Left
         sum += this.count_line(board, x, y, -1, 1, token); // Diagonal Up Left
+
+        return sum;
+    }
+
+    /**
+     * Gets the score for a token in one direction.
+     * @param {board.Board} board The current state of the board.
+     * @param {int} x The index of the column of the token on the board.
+     * @param {int} y The index of the row of the token on the board.
+     * @param {-1|0|1} dx The x direction to look in.
+     * @param {-1|0|1} dy The y direction to look in.
+     * @param {1|2} token The value of a player's token.
+     * @returns The summed score for a single direction of a token.
+     */
+    count_line(board, x, y, dx, dy, token) {
+        let sum = 0;
+
+        let board_array = board.board;
+
+        for (let i = 1; i < board.num_win; i++) {
+            try {
+                let row = y + (dy * i);
+                let col = x + (dx * i);
+
+                // Don't allow indexes to go negative
+                if (row < 0 || col < 0)
+                    return 0;
+
+                // Found one of your tokens
+                if (token == board_array[row][col])
+                    sum += 2;
+                // Found empty space
+                else if (0 == board_array[row][col])
+                    sum += 1
+                // Found opponent token, discard direction score
+                else
+                    return 0;
+
+            } catch (err) {
+                // Went out of bounds of array, discard direction score
+                return 0;
+            }
+        }
 
         return sum;
     }
