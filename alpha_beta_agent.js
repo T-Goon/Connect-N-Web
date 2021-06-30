@@ -1,4 +1,7 @@
+const { max } = require('lodash');
 const { Agent } = require('./agent');
+
+const VERY_LARGE_NUM = 100000000000000000000000000;
 
 class AlphaBetaAgent extends Agent {
     /**
@@ -47,7 +50,7 @@ class AlphaBetaAgent extends Agent {
     go(board) {
         this.cache_col_order(board.width);
 
-        v, action = self.negamax(board, -Infinity, Infinity, null, 1, board.player);
+        const [v, action] = self.negamax(board, -Infinity, Infinity, null, 1, board.player);
 
         return action;
     }
@@ -135,8 +138,8 @@ class AlphaBetaAgent extends Agent {
      * @returns The summed score for a single direction of a token.
      */
     count_line(board, x, y, dx, dy, token) {
-        if (typeof board === 'undefined' || typeof x === 'undefined' || typeof y === 'undefined' 
-        || typeof dx === 'undefined' || typeof dy === 'undefined' || typeof token === 'undefined')
+        if (typeof board === 'undefined' || typeof x === 'undefined' || typeof y === 'undefined'
+            || typeof dx === 'undefined' || typeof dy === 'undefined' || typeof token === 'undefined')
             return new Error('Bad input');
 
         let sum = 0;
@@ -169,6 +172,43 @@ class AlphaBetaAgent extends Agent {
         }
 
         return sum;
+    }
+
+    negamax(board, alpha, beta, old_action, depth, player) {
+        // Cache board outcome since get_outcome() is a bit expensive to calculate.
+        let winner = board.get_outcome();
+        let other_player = (player % 2) + 1;
+        let successors = self.get_successors(board);
+
+        // Calculate immediate win or loss and cache
+        // Could also be done in get_board_score()
+
+        // Check for win
+        if (winner == player) return [VERY_LARGE_NUM / depth, old_action];
+        if (winner == other_player) return [-VERY_LARGE_NUM / depth, old_action];
+        if (depth ==  this.max_depth || successors.length == 0) return [this.get_board_score(board, player, other_player), old_action];
+        
+        // Standard negamax
+        value = -Infinity;
+        action = null;
+        for(let i=0; i<successors.length; i++) {
+            let next_board = successors[i];
+
+            // It is notable that `nv` is negated every time it is used, this is a key property of negamax.
+            const [new_value, new_action] = this.negamax(next_board[0], -beta, -alpha, next_board[1], depth+1, other_player);
+
+            if (-new_value > value) {
+                value = -new_value;
+                action = next_board[1];
+            }
+
+            alpha = max([alpha, value]);
+
+            if(alpha >= beta) 
+                return [value, new_action];
+            
+            return [value, action];
+        }
     }
 }
 

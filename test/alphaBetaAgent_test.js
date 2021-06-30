@@ -106,6 +106,10 @@ describe('Simple AlphaBeta Agent Test', () => {
         assert.strictEqual(agent.get_board_score(b, 2, 1), 54);
     });
 
+    it('Negamax Test', () => {
+        // TODO finish the test
+    });
+
     it('Go test', () => {
         //TODO finish the test
     });
