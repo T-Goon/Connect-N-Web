@@ -206,8 +206,18 @@ describe('Simple AlphaBeta Agent Test', () => {
         const [v, action] = agent.negamax(b, -Infinity, Infinity, null, 1, b.player);
     });
 
-    it('Go test', () => {
-        //TODO finish the test
+    it('Don\'t Crash Go Test', () => {
+        let b = new Board([
+            [1, 2, 2, 2, 2, 0, 0],
+            [0, 1, 2, 2, 0, 0, 0],
+            [0, 0, 1, 2, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0]]);
+
+        const agent = new AlphaBetaAgent('bob', 5);
+
+        agent.go(b);
     });
 
 });
