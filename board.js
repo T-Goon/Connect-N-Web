@@ -31,9 +31,9 @@ class Board {
     /**
      * Check if a line of identical tokens exists starting at (x,y) in direction (dx,dy)
      * @param {int} x the x coordinate of the starting cell
-     * @param {*} y the y coordinate of the starting cell
-     * @param {*} dx the step in the x direction
-     * @param {*} dy the step in the y direction
+     * @param {int} y the y coordinate of the starting cell
+     * @param {-1|0|1} dx the step in the x direction
+     * @param {-1|0|1} dy the step in the y direction
      * @returns True if n tokens of the same type have been found, False otherwise
      */
     is_line_at(x, y, dx, dy) {
