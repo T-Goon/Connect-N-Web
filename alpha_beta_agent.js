@@ -1,5 +1,6 @@
-const { max } = require('lodash');
+const { max, cloneDeep } = require('lodash');
 const { Agent } = require('./agent');
+const Board = require('./board');
 
 const VERY_LARGE_NUM = 100000000000000000000000000;
 
@@ -174,6 +175,16 @@ class AlphaBetaAgent extends Agent {
         return sum;
     }
 
+    /**
+     * Calculates the optimal move and value of the given board for the given player.
+     * @param {board.Board} board The current state of the game board.
+     * @param {int} alpha The alpha value for alpha beta pruning
+     * @param {int} beta The beta value for alpha beta pruning
+     * @param {int} old_action The index of the column played to reach this board state
+     * @param {int} depth The current depth of the negamax search in the recursion
+     * @param {1|2} player The player to run the search for.
+     * @returns An array containing the max value found in the negamax search and the move to take to get there.
+     */
     negamax(board, alpha, beta, old_action, depth, player) {
         // Cache board outcome since get_outcome() is a bit expensive to calculate.
         let winner = board.get_outcome();
@@ -189,8 +200,8 @@ class AlphaBetaAgent extends Agent {
         if (depth ==  this.max_depth || successors.length == 0) return [this.get_board_score(board, player, other_player), old_action];
         
         // Standard negamax
-        value = -Infinity;
-        action = null;
+        let value = -Infinity;
+        let action = null;
         for(let i=0; i<successors.length; i++) {
             let next_board = successors[i];
 
@@ -209,6 +220,40 @@ class AlphaBetaAgent extends Agent {
             
             return [value, action];
         }
+    }
+
+    /**
+     * Get the successors of the given board in order of middle outwards.
+     * @param {board.Board} board The current state of the game board.
+     * @returns An array of successor boards along with the column where the last token was added to it.
+     */
+    get_successors(board) {
+        // Get possible actions, favors middle of board
+        let free_cols = [];
+        for(let i=0; i<this.col_order.length; i++) {
+            if(board.board[board.board.length-1][i] == 0)
+                free_cols.push(this.col_order[i]);
+        }
+
+        // Any legal actions left?
+        if (free_cols.length == 0) 
+            return [];
+
+        // Make list of new boards along with the corresponding actions
+        let successors = [];
+
+        for(let i=0; i<free_cols.length; i++) {
+            const col = free_cols[i];
+
+            let new_board = board.copy();
+
+            // Add a token to the new board, will change new_board.player
+            new_board.add_token(col);
+            // Add board to list of successors
+            successors.push([new_board, col]);
+        }
+
+        return successors;
     }
 }
 
