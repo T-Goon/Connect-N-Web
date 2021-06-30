@@ -51,7 +51,7 @@ class AlphaBetaAgent extends Agent {
     go(board) {
         this.cache_col_order(board.width);
 
-        const [v, action] = self.negamax(board, -Infinity, Infinity, null, 1, board.player);
+        const [v, action] = this.negamax(board, -Infinity, Infinity, null, 1, board.player);
 
         return action;
     }
@@ -189,7 +189,7 @@ class AlphaBetaAgent extends Agent {
         // Cache board outcome since get_outcome() is a bit expensive to calculate.
         let winner = board.get_outcome();
         let other_player = (player % 2) + 1;
-        let successors = self.get_successors(board);
+        let successors = this.get_successors(board);
 
         // Calculate immediate win or loss and cache
         // Could also be done in get_board_score()

@@ -183,7 +183,6 @@ describe('Simple AlphaBeta Agent Test', () => {
         const agent = new AlphaBetaAgent('bob', 5);
 
         agent.cache_col_order(b.width);
-        console.log(agent.col_order)
         const successors = agent.get_successors(b);
 
         for (let i = 0; i < successors.length; i++) {
@@ -191,8 +190,20 @@ describe('Simple AlphaBeta Agent Test', () => {
         }
     });
 
-    it('Negamax Test', () => {
-        // TODO finish the test
+    it('Don\'t Crash Negamax Test', () => {
+        let b = new Board([
+            [1, 2, 2, 2, 2, 0, 0],
+            [0, 1, 2, 2, 0, 0, 0],
+            [0, 0, 1, 2, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0]]);
+
+        const agent = new AlphaBetaAgent('bob', 5);
+
+        agent.cache_col_order(b.width);
+
+        const [v, action] = agent.negamax(b, -Infinity, Infinity, null, 1, b.player);
     });
 
     it('Go test', () => {
