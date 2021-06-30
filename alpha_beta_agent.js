@@ -1,3 +1,4 @@
+const { sum } = require('lodash');
 const { Agent } = require('./agent');
 
 class AlphaBetaAgent extends Agent {
@@ -64,6 +65,28 @@ class AlphaBetaAgent extends Agent {
         let sum = 0;
         sum += this.count_all(board, player);
         sum -= this.count_all(board, player);
+
+        return sum;
+    }
+
+    /**
+     * Gets the score of all tokens on the board for specified token t.
+     * @param {board.Board} board The current state of the game board.
+     * @param {1|2} token The value of a player's token
+     * @returns The summed score for tokens 't' on the board.
+     */
+    count_all(board, token) {
+        sum = 0;
+
+        // Go through all spaces on the board
+        for (let i = 0; i < board.height; i++) {
+            for (let j = 0; j < board.width; j++) {
+                // Only eval for the specified token
+                if (board.board[i][j] == t) {
+                    sum += this.token_score(board, j, i, t);
+                }
+            }
+        }
 
         return sum;
     }
