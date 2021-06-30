@@ -38,8 +38,18 @@ class AlphaBetaAgent extends Agent {
         }
     }
 
+    /**
+     * Picks a column to make a move.
+     * @param {board.Board} board The current board state of the game.
+     * @returns The index of the column where the token must be added.
+     * NOTE: The column must be legal.
+     */
     go(board) {
         this.cache_col_order(board.width);
+
+        v, action = self.negamax(board, -Infinity, Infinity, null, 1, board.player);
+
+        return action;
     }
 }
 

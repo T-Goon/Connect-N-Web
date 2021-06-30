@@ -13,4 +13,8 @@ describe('Simple AlphaBeta Agent Test', () => {
 
         assert.deepStrictEqual(agent.col_order, [2, 3, 1, 4, 0, 5]);
     });
+
+    it('Go test', () => {
+        //TODO finish the test
+    })
 });
