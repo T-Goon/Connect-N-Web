@@ -1,8 +1,9 @@
-const { max, cloneDeep } = require('lodash');
+const { max } = require('lodash');
 const { Agent } = require('./agent');
-const Board = require('./board');
 
 const VERY_LARGE_NUM = 100000000000000000000000000;
+const YOUR_TOKEN_SCORE = 2;
+const EMPTY_TOKEN_SCORE = 1;
 
 class AlphaBetaAgent extends Agent {
     /**
@@ -158,10 +159,10 @@ class AlphaBetaAgent extends Agent {
 
                 // Found one of your tokens
                 if (token == board_array[row][col])
-                    sum += 2;
+                    sum += YOUR_TOKEN_SCORE;
                 // Found empty space
                 else if (0 == board_array[row][col])
-                    sum += 1
+                    sum += EMPTY_TOKEN_SCORE;
                 // Found opponent token, discard direction score
                 else
                     return 0;
@@ -197,16 +198,16 @@ class AlphaBetaAgent extends Agent {
         // Check for win
         if (winner == player) return [VERY_LARGE_NUM / depth, old_action];
         if (winner == other_player) return [-VERY_LARGE_NUM / depth, old_action];
-        if (depth ==  this.max_depth || successors.length == 0) return [this.get_board_score(board, player, other_player), old_action];
-        
+        if (depth == this.max_depth || successors.length == 0) return [this.get_board_score(board, player, other_player), old_action];
+
         // Standard negamax
         let value = -Infinity;
         let action = null;
-        for(let i=0; i<successors.length; i++) {
+        for (let i = 0; i < successors.length; i++) {
             let next_board = successors[i];
 
             // It is notable that `nv` is negated every time it is used, this is a key property of negamax.
-            const [new_value, new_action] = this.negamax(next_board[0], -beta, -alpha, next_board[1], depth+1, other_player);
+            const [new_value, new_action] = this.negamax(next_board[0], -beta, -alpha, next_board[1], depth + 1, other_player);
 
             if (-new_value > value) {
                 value = -new_value;
@@ -215,9 +216,9 @@ class AlphaBetaAgent extends Agent {
 
             alpha = max([alpha, value]);
 
-            if(alpha >= beta) 
+            if (alpha >= beta)
                 return [value, new_action];
-            
+
             return [value, action];
         }
     }
@@ -230,19 +231,19 @@ class AlphaBetaAgent extends Agent {
     get_successors(board) {
         // Get possible actions, favors middle of board
         let free_cols = [];
-        for(let i=0; i<this.col_order.length; i++) {
-            if(board.board[board.board.length-1][i] == 0)
+        for (let i = 0; i < this.col_order.length; i++) {
+            if (board.board[board.board.length - 1][i] == 0)
                 free_cols.push(this.col_order[i]);
         }
 
         // Any legal actions left?
-        if (free_cols.length == 0) 
+        if (free_cols.length == 0)
             return [];
 
         // Make list of new boards along with the corresponding actions
         let successors = [];
 
-        for(let i=0; i<free_cols.length; i++) {
+        for (let i = 0; i < free_cols.length; i++) {
             const col = free_cols[i];
 
             let new_board = board.copy();
