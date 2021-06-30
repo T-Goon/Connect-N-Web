@@ -25,4 +25,8 @@ describe('Simple AlphaBeta Agent Test', () => {
     it('Count All Test', () => {
         // TODO finish the test
     });
+
+    it('Token Score Test', () => {
+        // TODO finish the test
+    });
 });

@@ -90,6 +90,30 @@ class AlphaBetaAgent extends Agent {
 
         return sum;
     }
+
+    /**
+     * Gets the score of a token in all 8 directions.
+     * @param {board.Board} board The current state of the game board.
+     * @param {int} x The index of the column of the token on the board.
+     * @param {int} y The index of the row of the token on the board.
+     * @param {1|2} token The value of a player's token.
+     * @returns Summed score for all 8 directions of a token.
+     */
+    token_score(board, x, y, token) {
+        // Look in all 8 directions for 0 tokens and 'token' tokens
+        sum = 0
+
+        sum += this.count_line(board, x, y, 0, 1, token); // Up
+        sum += this.count_line(board, x, y, 1, 1, token); // Diagonal Up Right
+        sum += this.count_line(board, x, y, 1, 0, token); // Right
+        sum += this.count_line(board, x, y, 1, -1, token); // Diagonal Down Right
+        sum += this.count_line(board, x, y, 0, -1, token); // Down
+        sum += this.count_line(board, x, y, -1, -1, token); // Diagonal Down Left
+        sum += this.count_line(board, x, y, -1, 0, token); // Left
+        sum += this.count_line(board, x, y, -1, 1, token); // Diagonal Up Left
+
+        return sum;
+    }
 }
 
 module.exports = AlphaBetaAgent;
