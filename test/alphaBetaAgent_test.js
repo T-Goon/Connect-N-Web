@@ -67,6 +67,19 @@ describe('Simple AlphaBeta Agent Test', () => {
         assert.strictEqual(agent.count_line(b, 3, 0, 0, 1, 2), 5);
     });
 
+    it('Token Score Test', () => {
+        let b = new Board([ [1, 2, 2, 2, 2, 0, 0],
+                            [0, 1, 2, 2, 0, 0, 0],
+                            [0, 0, 1, 2, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0]]);
+
+        const agent = new AlphaBetaAgent('bob', 5);
+
+        assert.strictEqual(agent.token_score(b, 3, 0, 2), 16);
+    });
+
     it('Go test', () => {
         //TODO finish the test
     })
@@ -76,10 +89,6 @@ describe('Simple AlphaBeta Agent Test', () => {
     });
 
     it('Count All Test', () => {
-        // TODO finish the test
-    });
-
-    it('Token Score Test', () => {
         // TODO finish the test
     });
 });
