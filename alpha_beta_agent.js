@@ -61,9 +61,13 @@ class AlphaBetaAgent extends Agent {
      */
     get_board_score(board, player, other) {
         // Calculate the score for both you and your opponent
+
+        if (typeof board === 'undefined' || typeof player === 'undefined' || typeof other === 'undefined')
+            return new Error('Bad input');
+
         let sum = 0;
         sum += this.count_all(board, player);
-        sum -= this.count_all(board, player);
+        sum -= this.count_all(board, other);
 
         return sum;
     }
@@ -75,14 +79,17 @@ class AlphaBetaAgent extends Agent {
      * @returns The summed score for tokens 't' on the board.
      */
     count_all(board, token) {
+        if (typeof board === 'undefined' || typeof token === 'undefined')
+            return new Error('Bad input');
+
         let sum = 0;
 
         // Go through all spaces on the board
         for (let i = 0; i < board.height; i++) {
             for (let j = 0; j < board.width; j++) {
                 // Only eval for the specified token
-                if (board.board[i][j] == t) {
-                    sum += this.token_score(board, j, i, t);
+                if (board.board[i][j] == token) {
+                    sum += this.token_score(board, j, i, token);
                 }
             }
         }
@@ -99,6 +106,9 @@ class AlphaBetaAgent extends Agent {
      * @returns Summed score for all 8 directions of a token.
      */
     token_score(board, x, y, token) {
+        if (typeof board === 'undefined' || typeof x === 'undefined' || typeof y === 'undefined' || typeof token === 'undefined')
+            return new Error('Bad input');
+
         // Look in all 8 directions for 0 tokens and 'token' tokens
         let sum = 0
 
@@ -125,6 +135,10 @@ class AlphaBetaAgent extends Agent {
      * @returns The summed score for a single direction of a token.
      */
     count_line(board, x, y, dx, dy, token) {
+        if (typeof board === 'undefined' || typeof x === 'undefined' || typeof y === 'undefined' 
+        || typeof dx === 'undefined' || typeof dy === 'undefined' || typeof token === 'undefined')
+            return new Error('Bad input');
+
         let sum = 0;
 
         let board_array = board.board;

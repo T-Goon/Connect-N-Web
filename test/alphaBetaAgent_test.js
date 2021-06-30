@@ -16,12 +16,12 @@ describe('Simple AlphaBeta Agent Test', () => {
     });
 
     it('Count Line Test Out of Bounds Neg', () => {
-        let b = new Board([ [1, 2, 2, 2, 2, 0, 0],
-                            [0, 1, 2, 2, 0, 0, 0],
-                            [0, 0, 1, 2, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0]]);
+        let b = new Board([[1, 2, 2, 2, 2, 0, 0],
+        [0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]]);
 
         const agent = new AlphaBetaAgent('bob', 5);
 
@@ -29,12 +29,12 @@ describe('Simple AlphaBeta Agent Test', () => {
     });
 
     it('Count Line Test Out of Bounds Pos', () => {
-        let b = new Board([ [1, 2, 2, 2, 2, 0, 0],
-                            [0, 1, 2, 2, 0, 0, 0],
-                            [0, 0, 1, 2, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0]]);
+        let b = new Board([[1, 2, 2, 2, 2, 0, 0],
+        [0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]]);
 
         const agent = new AlphaBetaAgent('bob', 5);
 
@@ -42,12 +42,12 @@ describe('Simple AlphaBeta Agent Test', () => {
     });
 
     it('Count Line Test Opposing Token', () => {
-        let b = new Board([ [1, 2, 2, 2, 2, 0, 0],
-                            [0, 1, 2, 2, 0, 0, 0],
-                            [0, 0, 1, 2, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0]]);
+        let b = new Board([[1, 2, 2, 2, 2, 0, 0],
+        [0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]]);
 
         const agent = new AlphaBetaAgent('bob', 5);
 
@@ -55,12 +55,12 @@ describe('Simple AlphaBeta Agent Test', () => {
     });
 
     it('Count Line Test OK', () => {
-        let b = new Board([ [1, 2, 2, 2, 2, 0, 0],
-                            [0, 1, 2, 2, 0, 0, 0],
-                            [0, 0, 1, 2, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0]]);
+        let b = new Board([[1, 2, 2, 2, 2, 0, 0],
+        [0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]]);
 
         const agent = new AlphaBetaAgent('bob', 5);
 
@@ -68,27 +68,46 @@ describe('Simple AlphaBeta Agent Test', () => {
     });
 
     it('Token Score Test', () => {
-        let b = new Board([ [1, 2, 2, 2, 2, 0, 0],
-                            [0, 1, 2, 2, 0, 0, 0],
-                            [0, 0, 1, 2, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0]]);
+        let b = new Board([[1, 2, 2, 2, 2, 0, 0],
+        [0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]]);
 
         const agent = new AlphaBetaAgent('bob', 5);
 
         assert.strictEqual(agent.token_score(b, 3, 0, 2), 16);
     });
 
-    it('Go test', () => {
-        //TODO finish the test
-    })
+    it('Count All Test', () => {
+        let b = new Board([[1, 2, 2, 2, 2, 0, 0],
+        [0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]]);
+
+        const agent = new AlphaBetaAgent('bob', 5);
+
+        assert.strictEqual(agent.count_all(b, 2), 75);
+    });
 
     it('Get Board Score Test', () => {
-        // TODO finish the test
+        let b = new Board([[1, 2, 2, 2, 2, 0, 0],
+        [0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]]);
+
+        const agent = new AlphaBetaAgent('bob', 5);
+
+        assert.strictEqual(agent.get_board_score(b, 2, 1), 54);
     });
 
-    it('Count All Test', () => {
-        // TODO finish the test
+    it('Go test', () => {
+        //TODO finish the test
     });
+
 });
