@@ -17,4 +17,8 @@ describe('Simple AlphaBeta Agent Test', () => {
     it('Go test', () => {
         //TODO finish the test
     })
+
+    it('Get Board Score Test', () => {
+        // TODO finish the test
+    });
 });

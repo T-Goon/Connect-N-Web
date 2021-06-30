@@ -51,6 +51,22 @@ class AlphaBetaAgent extends Agent {
 
         return action;
     }
+
+    /**
+     * Gets the score of a non-terminal board.
+     * @param {board.Board} board The current state of the game board.
+     * @param {1|2} player The value of a player's token.
+     * @param {1|2} other The value of the opponent's token.
+     * @returns The summed score for all tokens 't' on the board.
+     */
+    get_board_score(board, player, other) {
+        // Calculate the score for both you and your opponent
+        let sum = 0;
+        sum += this.count_all(board, player);
+        sum -= this.count_all(board, player);
+
+        return sum;
+    }
 }
 
 module.exports = AlphaBetaAgent;
