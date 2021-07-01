@@ -8,14 +8,99 @@ var boardWidth = (width / 2);
 var boardHeight = (height / 1.8);
 
 var circleRadius = ((width + height) / 2) / 39;
-
-var boardLayer = new Konva.Layer();
 var padding = blockSnapSize;
 
 var circle_y_spacing = boardHeight / 6;
 
 var x_locs = [];
 var num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0];
+
+var num_board = [
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0]
+];
+
+var stage = new Konva.Stage({
+    container: 'game-container',
+    width: width,
+    height: height
+});
+
+// Konva layers
+var layer = new Konva.Layer();
+var boardLayer = new Konva.Layer();
+
+/**
+ * Gets the y coordinate of where a game peice should be placed on the board in a given row.
+ * @param {int} index Index of the column to place a game peice in.
+ * @returns y coordinate of where a game peice should be placed in a given row.
+ */
+ function get_y_coord(index) {
+    return circleRadius + 10 + (5 - num_peices_in_cols[index]) * circle_y_spacing;
+}
+
+// Opponent Token
+function new_opponent_token(x, y, layer) {
+
+    // Create circle
+    let opponent_token = new Konva.Circle({
+        x: x,
+        y: y,
+        radius: circleRadius,
+        fill: 'black',
+        stroke: '#ddd',
+        strokeWidth: 1,
+        shadowColor: 'black',
+        shadowBlur: 2,
+        shadowOffset: { x: 1, y: 1 },
+        shadowOpacity: 0.4
+    });
+
+    layer.add(opponent_token);
+}
+/**
+ * Add token to number representation of the board.
+ * @param {int} col Column to place the token in, assumed valid.
+ */
+function add_token(col) {
+    // Find empty slot for token
+    let row = 0;
+
+    // Walk up column until an empy spot is found
+    while (num_board[row][col] != 0)
+        row = row + 1;
+
+    num_board[row][col] = 1;
+}
+
+function move(col) {
+    add_token(col);
+
+    $.ajax({
+        url: '/move', // route to execute
+        contentType: 'application/json; charset-utf-8',
+        dataType: 'json',
+        data: JSON.stringify({num_board}),
+        type: 'POST',
+        success: ((res) => {
+            // Replace follow button with unfollow
+            console.log('Result: '+ res);
+
+            // TODO place an opponent token
+            new_opponent_token(x_locs[res.col], get_y_coord(res.col), layer);
+            num_peices_in_cols[res.col]++;
+
+            num_board = res.board;
+        }),
+        error: ((error) => {
+            console.log('Error: '+ error);
+        })
+    });
+}
 
 // Cache x locations of the placed circles
 for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
@@ -34,7 +119,7 @@ boardLayer.add(new Konva.Rect({
     fill: 'blue'
 }));
 
-// Empty circles for the game pieces
+// Empty circles for the game pieces on the board
 for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / 6) {
     for (let i = 0; i < 7; i++) {
         boardLayer.add(new Konva.Circle({
@@ -59,15 +144,6 @@ var shadowCircle = new Konva.Circle({
     strokeWidth: 3,
     dash: [20, 2]
 })
-
-/**
- * Gets the y coordinate of where a game peice should be placed on the board in a given row.
- * @param {int} index Index of the column to place a game peice in.
- * @returns y coordinate of where a game peice should be placed in a given row.
- */
-function get_y_coord(index) {
-    return circleRadius + 10 + (5 - num_peices_in_cols[index]) * circle_y_spacing;
-}
 
 /**
  * Creates a circle that acts as a new game peice.
@@ -110,7 +186,7 @@ function newCircle(x, y, layer, stage) {
 
         let new_y_pos = get_y_coord(index_x);
 
-        if(num_peices_in_cols[index_x] < 6) {
+        if (num_peices_in_cols[index_x] < 6) {
             // Column on the game board is not full
 
             circle.position({
@@ -118,15 +194,17 @@ function newCircle(x, y, layer, stage) {
                 y: new_y_pos
             });
             circle.draggable(false);
-    
+
             // Increment num peices in row
-            num_peices_in_cols[index_x] ++;
-    
+            num_peices_in_cols[index_x]++;
+
             stage.batchDraw();
             shadowCircle.hide();
-    
+
             // Game peice placed successfully, create a new one
             newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
+
+            move(closest_x);
         } else {
             // Column on the game board is full
 
@@ -162,13 +240,6 @@ function newCircle(x, y, layer, stage) {
     layer.add(circle);
 }
 
-var stage = new Konva.Stage({
-    container: 'game-container',
-    width: width,
-    height: height
-});
-
-var layer = new Konva.Layer();
 shadowCircle.hide();
 layer.add(shadowCircle);
 newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
