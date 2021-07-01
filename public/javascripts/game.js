@@ -7,8 +7,45 @@ var blockSnapSize = 30;
 var boardWidth = (width / 2);
 var boardHeight = (height / 1.8);
 
-var circleRadius = width / 50;
+var circleRadius = ((width + height) / 2) / 39;
 
+var boardLayer = new Konva.Layer();
+var padding = blockSnapSize;
+
+var x_locs = [];
+
+// Cache x locations of the placed circles
+for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
+    x_locs.push(i);
+}
+
+// Lines for board border
+console.log(width, padding, width / padding);
+boardLayer.add(new Konva.Rect({
+    x: 0,
+    y: 0,
+    width: boardWidth,
+    height: boardHeight,
+    stroke: 'black',
+    strokeWidth: 5,
+    fill: 'blue'
+}));
+
+// Empty circles for the game pieces
+for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / 6) {
+    for (let i = 0; i < 7; i++) {
+        boardLayer.add(new Konva.Circle({
+            x: x_locs[i],
+            y: j,
+            radius: circleRadius,
+            fill: 'white',
+            stroke: 'black',
+            strokeWidth: 4
+        }));
+    }
+}
+
+// Shows where the game peice will snap to when released
 var shadowCircle = new Konva.Circle({
     x: 0,
     y: 0,
@@ -20,6 +57,7 @@ var shadowCircle = new Konva.Circle({
     dash: [20, 2]
 })
 
+// Creates a game peice
 function newCircle(x, y, layer, stage) {
     let circle = new Konva.Circle({
         x: x,
@@ -40,8 +78,12 @@ function newCircle(x, y, layer, stage) {
         circle.moveToTop();
     });
     circle.on('dragend', (e) => {
+
         circle.position({
-            x: Math.round(circle.x() / blockSnapSize) * blockSnapSize,
+            // Closest x spot on the game board
+            x: x_locs.reduce((a, b) => {
+                return Math.abs(b - circle.x()) < Math.abs(a - circle.x()) ? b : a;
+            }),
             y: Math.round(circle.y() / blockSnapSize) * blockSnapSize
         });
         stage.batchDraw();
@@ -49,7 +91,10 @@ function newCircle(x, y, layer, stage) {
     });
     circle.on('dragmove', (e) => {
         shadowCircle.position({
-            x: Math.round(circle.x() / blockSnapSize) * blockSnapSize,
+            // Closest x spot on the game board
+            x: x_locs.reduce((a, b) => {
+                return Math.abs(b - circle.x()) < Math.abs(a - circle.x()) ? b : a;
+            }),
             y: Math.round(circle.y() / blockSnapSize) * blockSnapSize
         });
         stage.batchDraw();
@@ -62,35 +107,6 @@ var stage = new Konva.Stage({
     width: width,
     height: height
 });
-
-var boardLayer = new Konva.Layer();
-var padding = blockSnapSize;
-
-// Lines for board border
-console.log(width, padding, width / padding);
-boardLayer.add(new Konva.Rect({
-    x: 0,
-    y:0,
-    width: boardWidth,
-    height: boardHeight,
-    stroke: 'black',
-    strokeWidth: 5,
-    fill: 'blue'
-}));
-
-// Empty circles for the game pieces
-for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / 6) {
-    for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
-        boardLayer.add(new Konva.Circle({
-            x: i,
-            y: j,
-            radius: circleRadius,
-            fill: 'white',
-            stroke: 'black',
-            strokeWidth: 4
-        }));
-    }
-}
 
 var layer = new Konva.Layer();
 shadowCircle.hide();
