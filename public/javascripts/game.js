@@ -60,13 +60,25 @@ var shadowCircle = new Konva.Circle({
     dash: [20, 2]
 })
 
+/**
+ * Gets the y coordinate of where a game peice should be placed on the board in a given row.
+ * @param {int} index Index of the column to place a game peice in.
+ * @returns y coordinate of where a game peice should be placed in a given row.
+ */
 function get_y_coord(index) {
-    console.log((7 - num_peices_in_cols[index]) * circle_y_spacing);
     return circleRadius + 10 + (5 - num_peices_in_cols[index]) * circle_y_spacing;
 }
 
-// Creates a game peice
+/**
+ * Creates a circle that acts as a new game peice.
+ * @param {float} x Initial x coordinate to place the circle
+ * @param {float} y Initial y coordinate to place the circle
+ * @param {Konva.Layer} layer Layer to place the circle in
+ * @param {Konva.Stage} stage Stage to place the circle in
+ */
 function newCircle(x, y, layer, stage) {
+
+    // Create circle
     let circle = new Konva.Circle({
         x: x,
         y: y,
@@ -80,11 +92,13 @@ function newCircle(x, y, layer, stage) {
         shadowOpacity: 0.4,
         draggable: true
     });
+
     circle.on('dragstart', (e) => {
         shadowCircle.show();
         shadowCircle.moveToTop();
         circle.moveToTop();
     });
+
     circle.on('dragend', (e) => {
 
         // Closest x spot on the game board
@@ -94,19 +108,41 @@ function newCircle(x, y, layer, stage) {
 
         let index_x = x_locs.indexOf(closest_x);
 
-        circle.position({
-            // Closest x spot on the game board
-            x: closest_x,
-            y: get_y_coord(index_x)
-        });
+        let new_y_pos = get_y_coord(index_x);
 
-        num_peices_in_cols[index_x] ++;
+        if(num_peices_in_cols[index_x] < 6) {
+            // Column on the game board is not full
 
-        stage.batchDraw();
-        shadowCircle.hide();
+            circle.position({
+                x: closest_x,
+                y: new_y_pos
+            });
+            circle.draggable(false);
+    
+            // Increment num peices in row
+            num_peices_in_cols[index_x] ++;
+    
+            stage.batchDraw();
+            shadowCircle.hide();
+    
+            // Game peice placed successfully, create a new one
+            newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
+        } else {
+            // Column on the game board is full
 
-        newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
+            console.log('working');
+            // Return to original position
+            circle.position({
+                x: x,
+                y: y
+            });
+
+            stage.batchDraw();
+            shadowCircle.hide();
+        }
+
     });
+
     circle.on('dragmove', (e) => {
         // Closest x spot on the game board
         let closest_x = x_locs.reduce((a, b) => {
@@ -119,8 +155,10 @@ function newCircle(x, y, layer, stage) {
             x: closest_x,
             y: get_y_coord(index_x)
         });
+
         stage.batchDraw();
     });
+
     layer.add(circle);
 }
 
