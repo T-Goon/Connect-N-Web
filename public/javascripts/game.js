@@ -12,7 +12,10 @@ var circleRadius = ((width + height) / 2) / 39;
 var boardLayer = new Konva.Layer();
 var padding = blockSnapSize;
 
+var circle_y_spacing = boardHeight / 6;
+
 var x_locs = [];
+var num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0];
 
 // Cache x locations of the placed circles
 for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
@@ -57,13 +60,18 @@ var shadowCircle = new Konva.Circle({
     dash: [20, 2]
 })
 
+function get_y_coord(index) {
+    console.log((7 - num_peices_in_cols[index]) * circle_y_spacing);
+    return circleRadius + 10 + (5 - num_peices_in_cols[index]) * circle_y_spacing;
+}
+
 // Creates a game peice
 function newCircle(x, y, layer, stage) {
     let circle = new Konva.Circle({
         x: x,
         y: y,
         radius: circleRadius,
-        fill: '#fff',
+        fill: 'red',
         stroke: '#ddd',
         strokeWidth: 1,
         shadowColor: 'black',
@@ -79,23 +87,37 @@ function newCircle(x, y, layer, stage) {
     });
     circle.on('dragend', (e) => {
 
+        // Closest x spot on the game board
+        let closest_x = x_locs.reduce((a, b) => {
+            return Math.abs(b - circle.x()) < Math.abs(a - circle.x()) ? b : a;
+        });
+
+        let index_x = x_locs.indexOf(closest_x);
+
         circle.position({
             // Closest x spot on the game board
-            x: x_locs.reduce((a, b) => {
-                return Math.abs(b - circle.x()) < Math.abs(a - circle.x()) ? b : a;
-            }),
-            y: Math.round(circle.y() / blockSnapSize) * blockSnapSize
+            x: closest_x,
+            y: get_y_coord(index_x)
         });
+
+        num_peices_in_cols[index_x] ++;
+
         stage.batchDraw();
         shadowCircle.hide();
+
+        newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
     });
     circle.on('dragmove', (e) => {
+        // Closest x spot on the game board
+        let closest_x = x_locs.reduce((a, b) => {
+            return Math.abs(b - circle.x()) < Math.abs(a - circle.x()) ? b : a;
+        });
+
+        let index_x = x_locs.indexOf(closest_x);
+
         shadowCircle.position({
-            // Closest x spot on the game board
-            x: x_locs.reduce((a, b) => {
-                return Math.abs(b - circle.x()) < Math.abs(a - circle.x()) ? b : a;
-            }),
-            y: Math.round(circle.y() / blockSnapSize) * blockSnapSize
+            x: closest_x,
+            y: get_y_coord(index_x)
         });
         stage.batchDraw();
     });
@@ -111,8 +133,7 @@ var stage = new Konva.Stage({
 var layer = new Konva.Layer();
 shadowCircle.hide();
 layer.add(shadowCircle);
-newCircle(blockSnapSize * 3, blockSnapSize * 3, layer, stage);
-newCircle(blockSnapSize * 10, blockSnapSize * 3, layer, stage);
+newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
 
 stage.add(boardLayer);
 stage.add(layer);
