@@ -232,7 +232,7 @@ class AlphaBetaAgent extends Agent {
         // Get possible actions, favors middle of board
         let free_cols = [];
         for (let i = 0; i < this.col_order.length; i++) {
-            if (board.board[board.board.length - 1][i] == 0)
+            if (board.board[board.board.length - 1][this.col_order[i]] == 0)
                 free_cols.push(this.col_order[i]);
         }
 

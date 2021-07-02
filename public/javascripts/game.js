@@ -92,14 +92,12 @@ function move(col) {
         data: JSON.stringify(data),
         type: 'POST',
         success: (res) => {
-            // Replace follow button with unfollow
-            console.log('Result: '+ res);
+            
+            num_board = res.board;
 
             // TODO place an opponent token
-            new_opponent_token(x_locs[res.col], get_y_coord(res.col), layer);
-            num_peices_in_cols[res.col]++;
-
-            num_board = res.board;
+            new_opponent_token(x_locs[res.move], get_y_coord(res.move), layer);
+            num_peices_in_cols[res.move]++;
         },
         error: (error) => {
             console.log('Error: '+ error);
