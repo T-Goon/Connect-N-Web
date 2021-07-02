@@ -69,14 +69,10 @@ function new_opponent_token(x, y, layer) {
 function add_token(col) {
     // Find empty slot for token
     let row = 0;
-    console.log(num_board);
 
     // Walk up column until an empy spot is found
-    while (num_board[row][col] != 0){
-        console.log(num_board[row][col])
-        console.log(col)
+    while (num_board[row][col] != 0)
         row = row + 1;
-    }
 
     num_board[row][col] = 1;
 }
@@ -117,7 +113,6 @@ for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
 }
 
 // Lines for board border
-console.log(width, padding, width / padding);
 boardLayer.add(new Konva.Rect({
     x: 0,
     y: 0,
@@ -218,7 +213,6 @@ function newCircle(x, y, layer, stage) {
         } else {
             // Column on the game board is full
 
-            console.log('working');
             // Return to original position
             circle.position({
                 x: x,
