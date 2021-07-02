@@ -1,7 +1,7 @@
 const { max } = require('lodash');
 const { Agent } = require('./agent');
 
-const VERY_LARGE_NUM = 100000000000000000000000000;
+const VERY_LARGE_NUM = 100000000000;
 const YOUR_TOKEN_SCORE = 2;
 const EMPTY_TOKEN_SCORE = 1;
 
@@ -196,9 +196,11 @@ class AlphaBetaAgent extends Agent {
         // Could also be done in get_board_score()
 
         // Check for win
-        if (winner == player) return [VERY_LARGE_NUM / depth, old_action];
-        if (winner == other_player) return [-VERY_LARGE_NUM / depth, old_action];
-        if (depth == this.max_depth || successors.length == 0) return [this.get_board_score(board, player, other_player), old_action];
+        if (winner == player) { return [VERY_LARGE_NUM / depth, old_action]; }
+        if (winner == other_player) { return [-VERY_LARGE_NUM / depth, old_action]; }
+        if (depth == this.max_depth || successors.length == 0) { 
+            return [this.get_board_score(board, player, other_player), old_action]; 
+        }
 
         // Standard negamax
         let value = -Infinity;
@@ -216,11 +218,10 @@ class AlphaBetaAgent extends Agent {
 
             alpha = max([alpha, value]);
 
-            if (alpha >= beta)
-                return [value, new_action];
-
-            return [value, action];
+            if (alpha >= beta) return [value, new_action];
         }
+
+        return [value, action];
     }
 
     /**
