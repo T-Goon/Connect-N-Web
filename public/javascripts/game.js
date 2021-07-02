@@ -69,10 +69,14 @@ function new_opponent_token(x, y, layer) {
 function add_token(col) {
     // Find empty slot for token
     let row = 0;
+    console.log(num_board);
 
     // Walk up column until an empy spot is found
-    while (num_board[row][col] != 0)
+    while (num_board[row][col] != 0){
+        console.log(num_board[row][col])
+        console.log(col)
         row = row + 1;
+    }
 
     num_board[row][col] = 1;
 }
@@ -80,13 +84,18 @@ function add_token(col) {
 function move(col) {
     add_token(col);
 
+    const data = {
+        board: num_board,
+        player: 1
+    };
+
     $.ajax({
         url: '/move', // route to execute
-        contentType: 'application/json; charset-utf-8',
+        contentType: 'application/json',
         dataType: 'json',
-        data: JSON.stringify({num_board}),
+        data: JSON.stringify(data),
         type: 'POST',
-        success: ((res) => {
+        success: (res) => {
             // Replace follow button with unfollow
             console.log('Result: '+ res);
 
@@ -95,10 +104,10 @@ function move(col) {
             num_peices_in_cols[res.col]++;
 
             num_board = res.board;
-        }),
-        error: ((error) => {
+        },
+        error: (error) => {
             console.log('Error: '+ error);
-        })
+        }
     });
 }
 
@@ -204,7 +213,8 @@ function newCircle(x, y, layer, stage) {
             // Game peice placed successfully, create a new one
             newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
 
-            move(closest_x);
+            // Tell server about placement
+            move(index_x);
         } else {
             // Column on the game board is full
 

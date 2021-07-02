@@ -3,12 +3,8 @@ var router = express.Router();
 const index = require('../controllers/index');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+router.get('/', index.show_index);
 
-router.post('/move', (req, res, next) => {
-  res.send({});
-});
+router.post('/move', index.make_move);
 
 module.exports = router;
