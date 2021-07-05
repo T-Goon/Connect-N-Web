@@ -1,7 +1,7 @@
-var width = document.getElementById('game-container').offsetWidth;
-if (width < 1000) width = 1000;
-var height = window.innerHeight - 50;
-if (height < 500) height = 500;
+// var width = document.getElementById('game-container').offsetWidth;
+var width = 1000;
+// var height = window.innerHeight - 50;
+var height = 500;
 var shadowOffset = 20;
 var tween = null;
 var blockSnapSize = 30;
