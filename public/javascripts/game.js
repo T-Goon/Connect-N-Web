@@ -39,7 +39,7 @@ var boardLayer = new Konva.Layer();
  * @param {int} index Index of the column to place a game peice in.
  * @returns y coordinate of where a game peice should be placed in a given row.
  */
- function get_y_coord(index) {
+function get_y_coord(index) {
     return circleRadius + 10 + (5 - num_peices_in_cols[index]) * circle_y_spacing;
 }
 
@@ -91,11 +91,11 @@ async function check_player_win(player) {
         data: JSON.stringify(data),
         type: 'POST',
         success: (res) => {
-            
+
             winner = res.win;
         },
         error: (error) => {
-            console.log('Error: '+ error);
+            console.log('Error: ' + error);
         }
     });
 
@@ -123,7 +123,7 @@ async function move(col) {
         data: JSON.stringify(data),
         type: 'POST',
         success: (res) => {
-            
+
             num_board = res.board;
 
             // place an opponent token
@@ -134,7 +134,7 @@ async function move(col) {
             winner = res.win;
         },
         error: (error) => {
-            console.log('Error: '+ error);
+            console.log('Error: ' + error);
         }
     });
 
@@ -253,8 +253,52 @@ function newCircle(x, y, layer, stage) {
 
             // Game peice placed successfully, create a new one
             // only if AI has not won
-            if(winner == 0)
+            if (winner == 0)
                 newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
+            else {
+                let msg = '';
+                let color = '';
+
+                if (winner == 1) {
+                    msg = 'YOU WIN!!! :)';
+                    color = 'green';
+                } else {
+                    msg = 'YOU LOSE :(';
+                    color = 'red';
+                }
+
+                let text = new Konva.Text({
+                    x: boardWidth / 4,
+                    y: boardHeight / 2.5,
+                    width: boardWidth / 2,
+                    text: msg,
+                    fontSize: 50,
+                    fontFamily: 'Calibri',
+                    fill: color,
+                    padding: 20,
+                    align: 'center'
+                });
+
+                var rect = new Konva.Rect({
+                    x: boardWidth / 4,
+                    y: boardHeight / 2.5,
+                    stroke: '#555',
+                    strokeWidth: 5,
+                    fill: '#ddd',
+                    width: boardWidth / 2,
+                    height: text.height(),
+                    shadowColor: 'black',
+                    shadowBlur: 10,
+                    shadowOffsetX: 10,
+                    shadowOffsetY: 10,
+                    shadowOpacity: 0.2,
+                    cornerRadius: 10,
+                });
+
+                layer.add(rect);
+                layer.add(text);
+            }
+
         } else {
             // Column on the game board is full
 
