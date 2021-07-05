@@ -1,16 +1,22 @@
 var width = document.getElementById('game-container').offsetWidth;
+if (width < 1000) width = 1000;
 var height = window.innerHeight - 50;
+if (height < 500) height = 500;
 var shadowOffset = 20;
 var tween = null;
 var blockSnapSize = 30;
 
-var boardWidth = (width / 2);
-var boardHeight = (height / 1.8);
+// var boardWidth = (width / 2);
+const boardWidth = 902;
+// var boardHeight = (height / 1.8);
+const boardHeight = 492;
 
-var circleRadius = ((width + height) / 2) / 39;
+// var circleRadius = ((width + height) / 2) / 39;
+const circleRadius = 34.5;
+
 var padding = blockSnapSize;
 
-var circle_y_spacing = boardHeight / 6;
+const circle_y_spacing = boardHeight / 6;
 
 var x_locs = [];
 var num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0];
