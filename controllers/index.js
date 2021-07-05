@@ -17,11 +17,13 @@ exports.make_move = (req, res, next) => {
     const alpha_beta_agent = new AlphaBetaAgent('AI', 6);
     const move = alpha_beta_agent.go(board);
     board.add_token(move);
+    console.log(board.get_outcome());
 
     // Send response
     const res_json = {
         board: board.board,
-        move: move
+        move: move,
+        win: board.get_outcome()
     };
 
     res.json(res_json);

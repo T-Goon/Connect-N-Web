@@ -77,7 +77,38 @@ function add_token(col) {
     num_board[row][col] = 1;
 }
 
-function move(col) {
+async function check_player_win(player) {
+    const data = {
+        board: num_board
+    }
+
+    let winner = 0;
+
+    await $.ajax({
+        url: '/check_win', // route to execute
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        type: 'POST',
+        success: (res) => {
+            
+            winner = res.win;
+        },
+        error: (error) => {
+            console.log('Error: '+ error);
+        }
+    });
+
+    return winner;
+}
+
+/**
+ * Notify server about the player's move in the game
+ * @param {int} col Index of column on board to place game peice
+ * @returns [0|1|2] Player number of the winner of the game. 0 if noone won.
+ * [1|2] if AI has won the game.
+ */
+async function move(col) {
     add_token(col);
 
     const data = {
@@ -85,7 +116,9 @@ function move(col) {
         player: 1
     };
 
-    $.ajax({
+    let winner = 0;
+
+    await $.ajax({
         url: '/move', // route to execute
         contentType: 'application/json',
         dataType: 'json',
@@ -95,14 +128,19 @@ function move(col) {
             
             num_board = res.board;
 
-            // TODO place an opponent token
+            // place an opponent token
             new_opponent_token(x_locs[res.move], get_y_coord(res.move), layer);
             num_peices_in_cols[res.move]++;
+
+            // Check for AI win
+            winner = res.win;
         },
         error: (error) => {
             console.log('Error: '+ error);
         }
     });
+
+    return winner;
 }
 
 // Cache x locations of the placed circles
@@ -177,7 +215,7 @@ function newCircle(x, y, layer, stage) {
         circle.moveToTop();
     });
 
-    circle.on('dragend', (e) => {
+    circle.on('dragend', async (e) => {
 
         // Closest x spot on the game board
         let closest_x = x_locs.reduce((a, b) => {
@@ -191,6 +229,7 @@ function newCircle(x, y, layer, stage) {
         if (num_peices_in_cols[index_x] < 6) {
             // Column on the game board is not full
 
+            // Place game peice
             circle.position({
                 x: closest_x,
                 y: new_y_pos
@@ -203,11 +242,18 @@ function newCircle(x, y, layer, stage) {
             stage.batchDraw();
             shadowCircle.hide();
 
-            // Game peice placed successfully, create a new one
-            newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
+            // Check for a player win
+            const winner = await check_player_win(1);
 
-            // Tell server about placement
-            move(index_x);
+            // Tell server about placement so AI can take turn
+            // Only if player has not already won
+            if (winner == 0)
+                winner = await move(index_x);
+
+            // Game peice placed successfully, create a new one
+            // only if AI has not won
+            if(winner == 0)
+                newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
         } else {
             // Column on the game board is full
 
