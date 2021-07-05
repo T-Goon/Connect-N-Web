@@ -85,7 +85,7 @@ async function check_player_win(player) {
     let winner = 0;
 
     await $.ajax({
-        url: '/check_win', // route to execute
+        url: '/check_player_win', // route to execute
         contentType: 'application/json',
         dataType: 'json',
         data: JSON.stringify(data),
@@ -109,8 +109,6 @@ async function check_player_win(player) {
  * [1|2] if AI has won the game.
  */
 async function move(col) {
-    add_token(col);
-
     const data = {
         board: num_board,
         player: 1
@@ -242,8 +240,11 @@ function newCircle(x, y, layer, stage) {
             stage.batchDraw();
             shadowCircle.hide();
 
+            // Add player token to board array
+            add_token(index_x);
+
             // Check for a player win
-            const winner = await check_player_win(1);
+            let winner = await check_player_win(1);
 
             // Tell server about placement so AI can take turn
             // Only if player has not already won
