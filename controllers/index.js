@@ -12,7 +12,7 @@ exports.make_move = (req, res, next) => {
     try {
         // Create new board with board sent by client
         const board = new Board(req.body.board);
-        board.player = 2; // Hard coded in as player 2
+        board.player = (req.body.player % 2) + 1;
 
         // Create AI agent and make a move on the board
         const alpha_beta_agent = new AlphaBetaAgent('AI', 6);

@@ -1,20 +1,19 @@
-// var width = document.getElementById('game-container').offsetWidth;
 var width = 1000;
-// var height = window.innerHeight - 50;
 var height = 500;
 var shadowOffset = 20;
 var tween = null;
 var blockSnapSize = 30;
 
-// var boardWidth = (width / 2);
 const boardWidth = 902;
-// var boardHeight = (height / 1.8);
 const boardHeight = 492;
 
-// var circleRadius = ((width + height) / 2) / 39;
-const circleRadius = 34.5;
+const player1_color = 'red';
+const player2_color = 'black';
+var human_color = player1_color;
+var AI_color = player2_color;
+var player_val = 1;
 
-var padding = blockSnapSize;
+const circleRadius = 34.5;
 
 const circle_y_spacing = boardHeight / 6;
 
@@ -29,8 +28,6 @@ var num_board = [ // Array representation of the game board
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0]
 ];
-
-var peices = []; // All Konva game peices placed on the board
 
 var stage = new Konva.Stage({
     container: 'game-container',
@@ -52,7 +49,12 @@ function get_y_coord(index) {
     return circleRadius + 10 + (5 - num_peices_in_cols[index]) * circle_y_spacing;
 }
 
-// Opponent Token
+/**
+ * Places a Konva circle as the game peice for the AI player.
+ * @param {float} x x coordinate on the Konva stage to place the circle
+ * @param {float} y y coordinate on the Konva stage to place the circle
+ * @param {Konva.Layer} layer The Konva layer to place the circle in.
+ */
 function new_opponent_token(x, y, layer) {
 
     // Create circle
@@ -60,7 +62,7 @@ function new_opponent_token(x, y, layer) {
         x: x,
         y: y,
         radius: circleRadius,
-        fill: 'black',
+        fill: AI_color,
         stroke: '#ddd',
         strokeWidth: 1,
         shadowColor: 'black',
@@ -70,8 +72,8 @@ function new_opponent_token(x, y, layer) {
     });
 
     layer.add(opponent_token);
-    peices.push(opponent_token);
 }
+
 /**
  * Add token to number representation of the board.
  * @param {int} col Column to place the token in, assumed valid.
@@ -84,10 +86,14 @@ function add_token(col) {
     while (num_board[row][col] != 0)
         row = row + 1;
 
-    num_board[row][col] = 1;
+    num_board[row][col] = player_val;
 }
 
-async function check_player_win(player) {
+/**
+ * Sends board to the server to check if anyone has won the game.
+ * @returns [1|2] if the game has been won.
+ */
+async function check_player_win() {
     const data = {
         board: num_board
     }
@@ -113,14 +119,13 @@ async function check_player_win(player) {
 
 /**
  * Notify server about the player's move in the game
- * @param {int} col Index of column on board to place game peice
  * @returns [0|1|2] Player number of the winner of the game. 0 if noone won.
  * [1|2] if AI has won the game.
  */
-async function move(col) {
+async function AI_move() {
     const data = {
         board: num_board,
-        player: 1
+        player: player_val
     };
 
     let winner = 0;
@@ -206,7 +211,7 @@ function newCircle(x, y, layer, stage) {
         x: x,
         y: y,
         radius: circleRadius,
-        fill: 'red',
+        fill: human_color,
         stroke: '#ddd',
         strokeWidth: 1,
         shadowColor: 'black',
@@ -251,25 +256,24 @@ function newCircle(x, y, layer, stage) {
 
             // Add player token to board array
             add_token(index_x);
-            peices.push(circle);
 
             // Check for a player win
-            let winner = await check_player_win(1);
+            let winner = await check_player_win();
 
             // Tell server about placement so AI can take turn
             // Only if player has not already won
             if (winner == 0)
-                winner = await move(index_x);
+                winner = await AI_move();
 
             // Game peice placed successfully, create a new one
             // only if AI has not won
             if (winner == 0)
                 newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
-            else {
+            else { // Show a message if either the AI or the human one the game
                 let msg = '';
                 let color = '';
 
-                if (winner == 1) {
+                if (winner == player_val) {
                     msg = 'YOU WIN!!! :)';
                     color = 'green';
                 } else {
@@ -309,8 +313,7 @@ function newCircle(x, y, layer, stage) {
                 layer.add(text);
             }
 
-        } else {
-            // Column on the game board is full
+        } else { // Column on the game board is full
 
             // Return to original position
             circle.position({
@@ -350,10 +353,12 @@ newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
 stage.add(boardLayer);
 stage.add(shadow_layer);
 stage.add(layer);
+document.getElementById("player_select").value = '1';
 
+/**
+ * Resets the game state.
+ */
 function restart_game() {
-    console.log('working');
-
     // Reset game state variables
     num_board = [
         [0, 0, 0, 0, 0, 0, 0],
@@ -366,9 +371,22 @@ function restart_game() {
 
     num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0];
 
-    // Remove game peices from Konva board
+    // Remove game peices from Konva layer
     layer.destroyChildren();
     stage.batchDraw();
+
+    // Allows human to swap between player 1 and player 2
+    let select = document.getElementById("player_select");
+    player_val = parseInt(select.options[select.selectedIndex].value);
+
+    if(player_val ==  1){
+        human_color = player1_color;
+        AI_color = player2_color;
+    } else {
+        AI_color = player1_color;
+        human_color = player2_color;
+        AI_move();
+    } 
 
     // Make new player game peice on the right
     newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
