@@ -3,7 +3,7 @@ const Board = require('../board');
 
 // for route GET '/'
 exports.show_index = (req, res, next) => {
-    res.render('index', { title: 'Express' });
+    res.render('index', { title: 'Connect 4' });
 }
 
 // For route POST '/move'
