@@ -18,10 +18,10 @@ var padding = blockSnapSize;
 
 const circle_y_spacing = boardHeight / 6;
 
-var x_locs = [];
-var num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0];
+var x_locs = []; // X coord of each column on game board
+var num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0]; // num game peices in each column
 
-var num_board = [
+var num_board = [ // Array representation of the game board
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0],
@@ -29,6 +29,8 @@ var num_board = [
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0]
 ];
+
+var peices = []; // All Konva game peices placed on the board
 
 var stage = new Konva.Stage({
     container: 'game-container',
@@ -38,6 +40,7 @@ var stage = new Konva.Stage({
 
 // Konva layers
 var layer = new Konva.Layer();
+var shadow_layer = new Konva.Layer();
 var boardLayer = new Konva.Layer();
 
 /**
@@ -67,6 +70,7 @@ function new_opponent_token(x, y, layer) {
     });
 
     layer.add(opponent_token);
+    peices.push(opponent_token);
 }
 /**
  * Add token to number representation of the board.
@@ -97,7 +101,6 @@ async function check_player_win(player) {
         data: JSON.stringify(data),
         type: 'POST',
         success: (res) => {
-
             winner = res.win;
         },
         error: (error) => {
@@ -187,7 +190,7 @@ var shadowCircle = new Konva.Circle({
     stroke: '#CF6412',
     strokeWidth: 3,
     dash: [20, 2]
-})
+});
 
 /**
  * Creates a circle that acts as a new game peice.
@@ -248,6 +251,7 @@ function newCircle(x, y, layer, stage) {
 
             // Add player token to board array
             add_token(index_x);
+            peices.push(circle);
 
             // Check for a player win
             let winner = await check_player_win(1);
@@ -340,8 +344,32 @@ function newCircle(x, y, layer, stage) {
 }
 
 shadowCircle.hide();
-layer.add(shadowCircle);
+shadow_layer.add(shadowCircle);
 newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
 
 stage.add(boardLayer);
+stage.add(shadow_layer);
 stage.add(layer);
+
+function restart_game() {
+    console.log('working');
+
+    // Reset game state variables
+    num_board = [
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]
+    ];
+
+    num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0];
+
+    // Remove game peices from Konva board
+    layer.destroyChildren();
+    stage.batchDraw();
+
+    // Make new player game peice on the right
+    newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
+}
