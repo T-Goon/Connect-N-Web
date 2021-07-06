@@ -38,7 +38,68 @@ var stage = new Konva.Stage({
 // Konva layers
 var layer = new Konva.Layer();
 var shadow_layer = new Konva.Layer();
-var boardLayer = new Konva.Layer();
+var board_layer = new Konva.Layer();
+
+// Shows where the game peice will snap to when released
+var shadowCircle = new Konva.Circle({
+    x: 0,
+    y: 0,
+    radius: circleRadius,
+    fill: '#FF7B17',
+    opacity: 0.6,
+    stroke: '#CF6412',
+    strokeWidth: 3,
+    dash: [20, 2]
+});
+
+/**
+ * Main function.
+ */
+function main() {
+
+    // Cache x locations of the placed circles
+    for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
+        x_locs.push(i);
+    }
+
+    // Lines for board border
+    board_layer.add(new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: boardWidth,
+        height: boardHeight,
+        stroke: 'black',
+        strokeWidth: 5,
+        fill: 'blue'
+    }));
+
+    // Empty circles for the game pieces on the board
+    for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / 6) {
+        for (let i = 0; i < 7; i++) {
+            board_layer.add(new Konva.Circle({
+                x: x_locs[i],
+                y: j,
+                radius: circleRadius,
+                fill: 'white',
+                stroke: 'black',
+                strokeWidth: 4
+            }));
+        }
+    }
+
+    // Add circle to show snapping of peices to board columns
+    shadowCircle.hide();
+    shadow_layer.add(shadowCircle);
+
+    new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
+
+    stage.add(board_layer);
+    stage.add(shadow_layer);
+    stage.add(layer);
+
+    // Reset value of select element to player 1
+    document.getElementById("player_select").value = '1';
+}
 
 /**
  * Gets the y coordinate of where a game peice should be placed on the board in a given row.
@@ -155,48 +216,6 @@ async function AI_move() {
     return winner;
 }
 
-// Cache x locations of the placed circles
-for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
-    x_locs.push(i);
-}
-
-// Lines for board border
-boardLayer.add(new Konva.Rect({
-    x: 0,
-    y: 0,
-    width: boardWidth,
-    height: boardHeight,
-    stroke: 'black',
-    strokeWidth: 5,
-    fill: 'blue'
-}));
-
-// Empty circles for the game pieces on the board
-for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / 6) {
-    for (let i = 0; i < 7; i++) {
-        boardLayer.add(new Konva.Circle({
-            x: x_locs[i],
-            y: j,
-            radius: circleRadius,
-            fill: 'white',
-            stroke: 'black',
-            strokeWidth: 4
-        }));
-    }
-}
-
-// Shows where the game peice will snap to when released
-var shadowCircle = new Konva.Circle({
-    x: 0,
-    y: 0,
-    radius: circleRadius,
-    fill: '#FF7B17',
-    opacity: 0.6,
-    stroke: '#CF6412',
-    strokeWidth: 3,
-    dash: [20, 2]
-});
-
 /**
  * Creates a circle that acts as a new game peice.
  * @param {float} x Initial x coordinate to place the circle
@@ -204,7 +223,7 @@ var shadowCircle = new Konva.Circle({
  * @param {Konva.Layer} layer Layer to place the circle in
  * @param {Konva.Stage} stage Stage to place the circle in
  */
-function newCircle(x, y, layer, stage) {
+function new_game_peice(x, y, layer, stage) {
 
     // Create circle
     let circle = new Konva.Circle({
@@ -268,7 +287,7 @@ function newCircle(x, y, layer, stage) {
             // Game peice placed successfully, create a new one
             // only if AI has not won
             if (winner == 0)
-                newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
+                new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
             else { // Show a message if either the AI or the human one the game
                 let msg = '';
                 let color = '';
@@ -346,15 +365,6 @@ function newCircle(x, y, layer, stage) {
     layer.add(circle);
 }
 
-shadowCircle.hide();
-shadow_layer.add(shadowCircle);
-newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
-
-stage.add(boardLayer);
-stage.add(shadow_layer);
-stage.add(layer);
-document.getElementById("player_select").value = '1';
-
 /**
  * Resets the game state.
  */
@@ -379,15 +389,17 @@ function restart_game() {
     let select = document.getElementById("player_select");
     player_val = parseInt(select.options[select.selectedIndex].value);
 
-    if(player_val ==  1){
+    if (player_val == 1) {
         human_color = player1_color;
         AI_color = player2_color;
     } else {
         AI_color = player1_color;
         human_color = player2_color;
         AI_move();
-    } 
+    }
 
     // Make new player game peice on the right
-    newCircle(boardWidth + 50, boardHeight / 2, layer, stage);
+    new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
 }
+
+main();
