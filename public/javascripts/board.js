@@ -99,11 +99,15 @@ class Board {
     free_cols() {
         let free = [];
 
-        // Loop through all columns
-        for (let x = 0; x < this.width; x++)
-            // Add to free list if a free slot (0) is found
-            if (this.board[this.board.length - 1][x] == 0)
-                free.push(x);
+        for(let i=0; i<this.width; i++) 
+            if (this.num_peices_in_cols[i] != this.height)
+                free.push();
+
+        // // Loop through all columns
+        // for (let x = 0; x < this.width; x++)
+        //     // Add to free list if a free slot (0) is found
+        //     if (this.board[this.board.length - 1][x] == 0)
+        //         free.push(x);
 
         return free;
     }
