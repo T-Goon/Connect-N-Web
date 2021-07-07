@@ -1,10 +1,6 @@
-# Connect4-Web
+# ConnectN-Web
 
-A web app where you can play Connect 4 VS an AI using the negamax algorithm.
-
-The app is deployed on Heroku and can be found here: https://connect-4-web.herokuapp.com/.
-
-![image](https://user-images.githubusercontent.com/32044950/124662595-0e75ae80-de77-11eb-84e8-ef7ff19e5eaf.png)
+A web app where you can play Connect N, a varient of Connect 4, VS an AI using the Negamax algorithm. The app will allow the client to change the height and width of the board along with the number of game peices the players need to win the game.
 
 ## AI
 
