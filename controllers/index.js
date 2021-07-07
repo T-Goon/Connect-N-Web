@@ -32,16 +32,3 @@ exports.make_move = (req, res, next) => {
         console.log(err)
     }
 };
-
-// Route for POST '/check_player_win'
-exports.check_player_win = (req, res, next) => {
-    // Create new board with board sent by client
-    const board = new Board(req.body.board);
-
-    // Send response
-    const res_json = {
-        win: board.get_outcome()
-    };
-
-    res.json(res_json);
-};
