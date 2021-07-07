@@ -122,6 +122,10 @@ class Board {
         return free;
     }
 
+    /**
+     * Prints out a board to the terminal.
+     * For debugging only.
+     */
     print_it() {
         // '+----------+'
         console.log('+' + '-'.repeat(this.width) + "+");
