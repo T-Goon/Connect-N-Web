@@ -8,14 +8,34 @@ class Board {
      * Constructor
      * @param {2D list of ints} board the board configuration, row-major
      */
-    constructor(board) {
-        this.board = board;
-        this.width = 7;
-        this.height = 6;
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
         this.num_win = 4;
         this.player = 1;
 
-        var num_peices_in_cols = new Array(this.width); // num game peices in each column
+        this.board = new Array();
+        for (let i = 0; i < this.height; i++) {
+            this.board.push(new Array(this.width).fill(0));
+        }
+
+        this.num_peices_in_cols = new Array(this.width).fill(0); // num game peices in each column
+    }
+
+    /**
+     * Reset all spaces on the board to 0.
+     */
+    reset_board() {
+        for (let i = 0; i < this.height; i++) {
+            this.board[i].fill(0);
+        }
+    }
+
+    /**
+     * Reset the logs for number of peices in each column of the board to 0.
+     */
+    reset_num_peices_in_cols() {
+        this.num_peices_in_cols = this.num_peices_in_cols.fill(0);
     }
 
     /**
@@ -99,15 +119,9 @@ class Board {
     free_cols() {
         let free = [];
 
-        for(let i=0; i<this.width; i++) 
+        for (let i = 0; i < this.width; i++)
             if (this.num_peices_in_cols[i] != this.height)
-                free.push();
-
-        // // Loop through all columns
-        // for (let x = 0; x < this.width; x++)
-        //     // Add to free list if a free slot (0) is found
-        //     if (this.board[this.board.length - 1][x] == 0)
-        //         free.push(x);
+                free.push(i);
 
         return free;
     }

@@ -18,14 +18,7 @@ const circle_y_spacing = boardHeight / 6;
 
 var x_locs = []; // X coord of each column on game board
 
-var board = new Board([ // Array representation of the game board
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0]
-]);
+var board = new Board(7, 6);
 
 var stage = new Konva.Stage({
     container: 'game-container',
@@ -332,12 +325,8 @@ function new_game_peice(x, y, layer, stage) {
  */
 function restart_game() {
     // Reset game state variables
-    board.board = new Array(board.height);
-    for(let i=0; i<board.height; i++) {
-        board.board.push(new Array(board.width));
-    }
-
-    board.num_peices_in_cols = new Array(board.width);
+    board.reset_board();
+    board.reset_num_peices_in_cols();
 
     // Remove game peices from Konva layer
     layer.destroyChildren();
