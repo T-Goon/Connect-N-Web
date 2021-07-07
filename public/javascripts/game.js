@@ -17,7 +17,6 @@ const circleRadius = 34.5;
 const circle_y_spacing = boardHeight / 6;
 
 var x_locs = []; // X coord of each column on game board
-var num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0]; // num game peices in each column
 
 var board = new Board([ // Array representation of the game board
     [0, 0, 0, 0, 0, 0, 0],
@@ -106,7 +105,7 @@ function main() {
  * @returns y coordinate of where a game peice should be placed in a given row.
  */
 function get_y_coord(index) {
-    return circleRadius + 10 + (5 - num_peices_in_cols[index]) * circle_y_spacing;
+    return circleRadius + 10 + (5 - board.num_peices_in_cols[index]) * circle_y_spacing;
 }
 
 /**
@@ -159,7 +158,7 @@ async function AI_move() {
 
             // place an opponent token
             new_opponent_token(x_locs[res.move], get_y_coord(res.move), layer);
-            num_peices_in_cols[res.move]++;
+            board.num_peices_in_cols[res.move]++;
 
             // Check for AI win
             winner = res.win;
@@ -213,7 +212,7 @@ function new_game_peice(x, y, layer, stage) {
 
         let new_y_pos = get_y_coord(index_x);
 
-        if (num_peices_in_cols[index_x] >= 6) { // Column on the game board is full
+        if (board.num_peices_in_cols[index_x] >= 6) { // Column on the game board is full
 
             // Return to original position
             circle.position({
@@ -237,7 +236,7 @@ function new_game_peice(x, y, layer, stage) {
         circle.draggable(false);
 
         // Increment num peices in row
-        num_peices_in_cols[index_x]++;
+        board.num_peices_in_cols[index_x]++;
 
         stage.batchDraw();
         shadowCircle.hide();
@@ -333,16 +332,12 @@ function new_game_peice(x, y, layer, stage) {
  */
 function restart_game() {
     // Reset game state variables
-    board.board = [
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0]
-    ];
+    board.board = new Array(board.height);
+    for(let i=0; i<board.height; i++) {
+        board.board.push(new Array(board.width));
+    }
 
-    num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0];
+    board.num_peices_in_cols = new Array(board.width);
 
     // Remove game peices from Konva layer
     layer.destroyChildren();

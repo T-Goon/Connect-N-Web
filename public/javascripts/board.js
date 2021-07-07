@@ -14,6 +14,8 @@ class Board {
         this.height = 6;
         this.num_win = 4;
         this.player = 1;
+
+        var num_peices_in_cols = new Array(this.width); // num game peices in each column
     }
 
     /**
