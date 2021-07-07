@@ -83,6 +83,7 @@ function reset_konva_board() {
     stage.width(boardWidth + 100);
     stage.height(boardHeight + 10);
 
+    board_layer.destroyChildren();
     // Lines for board border
     board_layer.add(new Konva.Rect({
         x: 0,
