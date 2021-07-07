@@ -4,8 +4,8 @@ var shadowOffset = 20;
 var tween = null;
 var blockSnapSize = 30;
 
-const boardWidth = 902;
-const boardHeight = 492;
+var boardWidth = null;
+var boardHeight = null;
 
 const player1_color = 'red';
 const player2_color = 'black';
@@ -14,7 +14,7 @@ var AI_color = player2_color;
 
 const circleRadius = 34.5;
 
-const circle_y_spacing = boardHeight / 6;
+var circle_y_spacing = null;
 
 var x_locs = []; // X coord of each column on game board
 
@@ -48,35 +48,7 @@ var shadowCircle = new Konva.Circle({
  */
 function main() {
 
-    // Cache x locations of the placed circles
-    for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
-        x_locs.push(i);
-    }
-
-    // Lines for board border
-    board_layer.add(new Konva.Rect({
-        x: 0,
-        y: 0,
-        width: boardWidth,
-        height: boardHeight,
-        stroke: 'black',
-        strokeWidth: 5,
-        fill: 'blue'
-    }));
-
-    // Empty circles for the game pieces on the board
-    for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / 6) {
-        for (let i = 0; i < 7; i++) {
-            board_layer.add(new Konva.Circle({
-                x: x_locs[i],
-                y: j,
-                radius: circleRadius,
-                fill: 'white',
-                stroke: 'black',
-                strokeWidth: 4
-            }));
-        }
-    }
+    reset_konva_board();
 
     // Add circle to show snapping of peices to board columns
     shadowCircle.hide();
@@ -93,6 +65,48 @@ function main() {
     document.getElementById('board_width_select').value = '7';
     document.getElementById('board_height_select').value = '6';
     document.getElementById('num_tokens_select').value = '4';
+}
+
+function reset_konva_board() {
+
+    boardHeight = 10 + (circleRadius * 2.5 * board.height);
+    boardWidth = 50 + (circleRadius * 3.5 * board.width);
+
+    circle_y_spacing = boardHeight / board.height;
+
+    // Cache x locations of the placed circles
+    x_locs = new Array();
+    for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / board.width) {
+        x_locs.push(i);
+    }
+
+    stage.width(boardWidth + 100);
+    stage.height(boardHeight + 10);
+
+    // Lines for board border
+    board_layer.add(new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: boardWidth,
+        height: boardHeight,
+        stroke: 'black',
+        strokeWidth: 5,
+        fill: 'blue'
+    }));
+
+    // Empty circles for the game pieces on the board
+    for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / board.height) {
+        for (let i = 0; i < board.width; i++) {
+            board_layer.add(new Konva.Circle({
+                x: x_locs[i],
+                y: j,
+                radius: circleRadius,
+                fill: 'white',
+                stroke: 'black',
+                strokeWidth: 4
+            }));
+        }
+    }
 }
 
 /**
@@ -350,16 +364,17 @@ function restart_game() {
 
     select = document.getElementById('board_width_select');
     let num_cols = parseInt(select.value);
+    board.width = num_cols;
 
     select = document.getElementById('board_height_select');
     let num_rows = parseInt(select.value);
+    board.height = num_rows;
 
     select = document.getElementById('num_tokens_select');
     let num_win = parseInt(select.value);
+    board.num_win = num_win;
 
-    console.log(`num cols ${num_cols}`);
-    console.log(`num rows ${num_rows}`);
-    console.log(`num win ${num_win}`);
+    reset_konva_board();
 
     // Make new player game peice on the right
     new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);

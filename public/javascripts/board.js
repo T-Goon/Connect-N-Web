@@ -14,10 +14,8 @@ class Board {
         this.num_win = 4;
         this.player = 1;
 
-        this.board = new Array();
-        for (let i = 0; i < this.height; i++) {
-            this.board.push(new Array(this.width).fill(0));
-        }
+        this.board = null;
+        this.reset_board();
 
         this.num_peices_in_cols = new Array(this.width).fill(0); // num game peices in each column
     }
@@ -26,8 +24,9 @@ class Board {
      * Reset all spaces on the board to 0.
      */
     reset_board() {
+        this.board = new Array();
         for (let i = 0; i < this.height; i++) {
-            this.board[i].fill(0);
+            this.board.push(new Array(this.width).fill(0));
         }
     }
 
