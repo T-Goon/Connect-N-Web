@@ -11,7 +11,6 @@ const player1_color = 'red';
 const player2_color = 'black';
 var human_color = player1_color;
 var AI_color = player2_color;
-var player_val = 1;
 
 const circleRadius = 34.5;
 
@@ -20,14 +19,14 @@ const circle_y_spacing = boardHeight / 6;
 var x_locs = []; // X coord of each column on game board
 var num_peices_in_cols = [0, 0, 0, 0, 0, 0, 0]; // num game peices in each column
 
-var num_board = [ // Array representation of the game board
+var board = new Board([ // Array representation of the game board
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0]
-];
+]);
 
 var stage = new Konva.Stage({
     container: 'game-container',
@@ -136,57 +135,14 @@ function new_opponent_token(x, y, layer) {
 }
 
 /**
- * Add token to number representation of the board.
- * @param {int} col Column to place the token in, assumed valid.
- */
-function add_token(col) {
-    // Find empty slot for token
-    let row = 0;
-
-    // Walk up column until an empy spot is found
-    while (num_board[row][col] != 0)
-        row = row + 1;
-
-    num_board[row][col] = player_val;
-}
-
-/**
- * Sends board to the server to check if anyone has won the game.
- * @returns [1|2] if the game has been won.
- */
-async function check_player_win() {
-    const data = {
-        board: num_board
-    }
-
-    let winner = 0;
-
-    await $.ajax({
-        url: '/check_player_win', // route to execute
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(data),
-        type: 'POST',
-        success: (res) => {
-            winner = res.win;
-        },
-        error: (error) => {
-            console.log('Error: ' + error);
-        }
-    });
-
-    return winner;
-}
-
-/**
  * Notify server about the player's move in the game
  * @returns [0|1|2] Player number of the winner of the game. 0 if noone won.
  * [1|2] if AI has won the game.
  */
 async function AI_move() {
     const data = {
-        board: num_board,
-        player: player_val
+        board: board.board,
+        player: board.player
     };
 
     let winner = 0;
@@ -199,7 +155,7 @@ async function AI_move() {
         type: 'POST',
         success: (res) => {
 
-            num_board = res.board;
+            board.board = res.board;
 
             // place an opponent token
             new_opponent_token(x_locs[res.move], get_y_coord(res.move), layer);
@@ -287,26 +243,26 @@ function new_game_peice(x, y, layer, stage) {
         shadowCircle.hide();
 
         // Add player token to board array
-        add_token(index_x);
+        board.add_token(index_x);
 
         // Check for a player win
-        let winner = await check_player_win();
+        let winner = board.get_outcome();
 
         // Tell server about placement so AI can take turn
         // Only if player has not already won
         if (winner == 0)
             winner = await AI_move();
 
-        if (winner != 0 || (new Board(num_board)).free_cols().length == 0) {
+        if (winner != 0 || board.free_cols().length == 0) {
             // Show a message if the game has ended
             let msg = '';
             let color = '';
 
             // Change message depending on game outcome
-            if (winner == player_val) {
+            if (winner == board.player) {
                 msg = 'YOU WIN!!! :)';
                 color = 'green';
-            } else if (winner == (player_val % 2 + 1)) {
+            } else if (winner == (board.player % 2 + 1)) {
                 msg = 'YOU LOSE :(';
                 color = 'red';
             } else {
@@ -377,7 +333,7 @@ function new_game_peice(x, y, layer, stage) {
  */
 function restart_game() {
     // Reset game state variables
-    num_board = [
+    board.board = [
         [0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0],
@@ -394,9 +350,9 @@ function restart_game() {
 
     // Allows human to swap between player 1 and player 2
     let select = document.getElementById("player_select");
-    player_val = parseInt(select.options[select.selectedIndex].value);
+    board.player = parseInt(select.options[select.selectedIndex].value);
 
-    if (player_val == 1) {
+    if (board.player == 1) {
         human_color = player1_color;
         AI_color = player2_color;
     } else {

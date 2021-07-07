@@ -88,10 +88,6 @@ class Board {
             y = y + 1;
 
         this.board[y][x] = this.player;
-
-        // Switch player
-        if (this.player == 1) this.player = 2;
-        else this.player = 1;
     }
 
     /**
