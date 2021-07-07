@@ -21,10 +21,45 @@
   <p><strong>Instructions:</strong> Drag the game peice on the right onto the board to play.</p>
 
   <div class="my-3">
-    <select id="player_select" class="my-2 form-select" aria-label="Default select example">
-      <option selected value="1">Player 1</option>
-      <option value="2">Player 2</option>
-    </select>
+
+    <!-- Dropdown to select to play as player 1 or 2 -->
+    <div class="my-2 input-group">
+      <span class="input-group-text">Player Select</span>
+      <select id="player_select" class="form-select" aria-label="Player Select">
+        <option selected value="1">Player 1</option>
+        <option value="2">Player 2</option>
+      </select>
+    </div>
+
+    <!-- Dropdowns to select the board height -->
+    <div class="row">
+      <div class="col input-group my-2">
+        <span class="input-group-text">Board Height</span>
+        <select id="board_height_select" class="col form-select" aria-label="Board Height Select">
+          <option selected value="6">6</option>
+          <% for(let i=7; i<=10; i++){ %>
+            <option value="<%= i %>">
+              <%= i %>
+            </option>
+            <% } %>
+        </select>
+      </div>
+
+      <!-- Dropdowns to select the board width -->
+      <div class="col input-group my-2">
+        <span class="input-group-text">Board Width</span>
+        <select id="board_width_select" class="col form-select" aria-label="Board Width Select">
+          <option selected value="7">7</option>
+          <% for(let i=8; i<=12; i++){ %>
+            <option value="<%= i %>">
+              <%= i %>
+            </option>
+            <% } %>
+        </select>
+      </div>
+
+    </div>
+
     <button class="my-2 btn btn-warning btn-md" type="button" onclick="restart_game()">Restart Game</button>
   </div>
 
@@ -40,7 +75,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
-    <script type="text/javascript" src="/javascripts/board.js"></script>
+  <script type="text/javascript" src="/javascripts/board.js"></script>
   <script type="text/javascript" src="/javascripts/game.js"></script>
 </body>
 
