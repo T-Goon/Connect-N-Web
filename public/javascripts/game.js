@@ -257,82 +257,7 @@ function new_game_peice(x, y, layer, stage) {
 
         let new_y_pos = get_y_coord(index_x);
 
-        if (num_peices_in_cols[index_x] < 6) {
-            // Column on the game board is not full
-
-            // Place game peice
-            circle.position({
-                x: closest_x,
-                y: new_y_pos
-            });
-            circle.draggable(false);
-
-            // Increment num peices in row
-            num_peices_in_cols[index_x]++;
-
-            stage.batchDraw();
-            shadowCircle.hide();
-
-            // Add player token to board array
-            add_token(index_x);
-
-            // Check for a player win
-            let winner = await check_player_win();
-
-            // Tell server about placement so AI can take turn
-            // Only if player has not already won
-            if (winner == 0)
-                winner = await AI_move();
-
-            // Game peice placed successfully, create a new one
-            // only if AI has not won
-            if (winner == 0)
-                new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
-            else { // Show a message if either the AI or the human one the game
-                let msg = '';
-                let color = '';
-
-                if (winner == player_val) {
-                    msg = 'YOU WIN!!! :)';
-                    color = 'green';
-                } else {
-                    msg = 'YOU LOSE :(';
-                    color = 'red';
-                }
-
-                let text = new Konva.Text({
-                    x: boardWidth / 4,
-                    y: boardHeight / 2.5,
-                    width: boardWidth / 2,
-                    text: msg,
-                    fontSize: 50,
-                    fontFamily: 'Calibri',
-                    fill: color,
-                    padding: 20,
-                    align: 'center'
-                });
-
-                var rect = new Konva.Rect({
-                    x: boardWidth / 4,
-                    y: boardHeight / 2.5,
-                    stroke: '#555',
-                    strokeWidth: 5,
-                    fill: '#ddd',
-                    width: boardWidth / 2,
-                    height: text.height(),
-                    shadowColor: 'black',
-                    shadowBlur: 10,
-                    shadowOffsetX: 10,
-                    shadowOffsetY: 10,
-                    shadowOpacity: 0.2,
-                    cornerRadius: 10,
-                });
-
-                layer.add(rect);
-                layer.add(text);
-            }
-
-        } else { // Column on the game board is full
+        if (num_peices_in_cols[index_x] >= 6) { // Column on the game board is full
 
             // Return to original position
             circle.position({
@@ -342,8 +267,90 @@ function new_game_peice(x, y, layer, stage) {
 
             stage.batchDraw();
             shadowCircle.hide();
+            return;
         }
 
+
+        // Column on the game board is not full
+
+        // Place game peice
+        circle.position({
+            x: closest_x,
+            y: new_y_pos
+        });
+        circle.draggable(false);
+
+        // Increment num peices in row
+        num_peices_in_cols[index_x]++;
+
+        stage.batchDraw();
+        shadowCircle.hide();
+
+        // Add player token to board array
+        add_token(index_x);
+
+        // Check for a player win
+        let winner = await check_player_win();
+
+        // Tell server about placement so AI can take turn
+        // Only if player has not already won
+        if (winner == 0)
+            winner = await AI_move();
+
+        if (winner != 0 || (new Board(num_board)).free_cols().length == 0) {
+            // Show a message if the game has ended
+            let msg = '';
+            let color = '';
+
+            // Change message depending on game outcome
+            if (winner == player_val) {
+                msg = 'YOU WIN!!! :)';
+                color = 'green';
+            } else if (winner == (player_val % 2 + 1)) {
+                msg = 'YOU LOSE :(';
+                color = 'red';
+            } else {
+                msg = 'TIE';
+                color = 'yellow';
+            }
+
+            let text = new Konva.Text({
+                x: boardWidth / 4,
+                y: boardHeight / 2.5,
+                width: boardWidth / 2,
+                text: msg,
+                fontSize: 50,
+                fontFamily: 'Calibri',
+                fill: color,
+                padding: 20,
+                align: 'center'
+            });
+
+            var rect = new Konva.Rect({
+                x: boardWidth / 4,
+                y: boardHeight / 2.5,
+                stroke: '#555',
+                strokeWidth: 5,
+                fill: '#ddd',
+                width: boardWidth / 2,
+                height: text.height(),
+                shadowColor: 'black',
+                shadowBlur: 10,
+                shadowOffsetX: 10,
+                shadowOffsetY: 10,
+                shadowOpacity: 0.2,
+                cornerRadius: 10,
+            });
+
+            layer.add(rect);
+            layer.add(text);
+
+            return;
+        }
+
+        // Game peice placed successfully, create a new one
+        // only if AI has not won or game is tied
+        new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
     });
 
     circle.on('dragmove', (e) => {
