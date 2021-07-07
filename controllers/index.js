@@ -3,7 +3,7 @@ const Board = require('../board');
 
 // for route GET '/'
 exports.show_index = (req, res, next) => {
-    res.render('index', { title: 'Connect 4 Negamax' });
+    res.render('index', { title: 'Connect N Negamax' });
 }
 
 // For route POST '/move'
