@@ -58,6 +58,20 @@
         </select>
       </div>
 
+      <!-- Dropdown to select the number of tokens to line up to win the game -->
+      <div class="input-group my-2">
+        <span class="input-group-text">Number of Tokens Lined up to Win</span>
+        <select id="board_width_select" class="col form-select" aria-label="Number of Tokens Lined up to Win Select">
+          <option selected value="3">3</option>
+          <option selected value="4">4</option>
+          <% for(let i=5; i<=7; i++){ %>
+            <option value="<%= i %>">
+              <%= i %>
+            </option>
+            <% } %>
+        </select>
+      </div>
+
     </div>
 
     <button class="my-2 btn btn-warning btn-md" type="button" onclick="restart_game()">Restart Game</button>
