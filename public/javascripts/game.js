@@ -88,8 +88,11 @@ function main() {
     stage.add(shadow_layer);
     stage.add(layer);
 
-    // Reset value of select element to player 1
-    document.getElementById("player_select").value = '1';
+    // Reset value of all dropdowns to default
+    document.getElementById('player_select').value = '1';
+    document.getElementById('board_width_select').value = '7';
+    document.getElementById('board_height_select').value = '6';
+    document.getElementById('num_tokens_select').value = '4';
 }
 
 /**
@@ -333,8 +336,8 @@ function restart_game() {
     stage.batchDraw();
 
     // Allows human to swap between player 1 and player 2
-    let select = document.getElementById("player_select");
-    board.player = parseInt(select.options[select.selectedIndex].value);
+    let select = document.getElementById('player_select');
+    board.player = parseInt(select.value);
 
     if (board.player == 1) {
         human_color = player1_color;
@@ -344,6 +347,19 @@ function restart_game() {
         human_color = player2_color;
         AI_move();
     }
+
+    select = document.getElementById('board_width_select');
+    let num_cols = parseInt(select.value);
+
+    select = document.getElementById('board_height_select');
+    let num_rows = parseInt(select.value);
+
+    select = document.getElementById('num_tokens_select');
+    let num_win = parseInt(select.value);
+
+    console.log(`num cols ${num_cols}`);
+    console.log(`num rows ${num_rows}`);
+    console.log(`num win ${num_win}`);
 
     // Make new player game peice on the right
     new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
