@@ -110,7 +110,7 @@ function reset_konva_board() {
 }
 
 function reset_x_locs() {
-    
+
 }
 
 /**
@@ -291,7 +291,7 @@ function new_game_peice(x, y, layer, stage) {
                 y: boardHeight / 2.5,
                 width: boardWidth / 2,
                 text: msg,
-                fontSize: 50,
+                fontSize: 50 / (7 / board.height),
                 fontFamily: 'Calibri',
                 fill: color,
                 padding: 20,
@@ -374,7 +374,7 @@ function restart_game() {
     // Reset board state variables
     board.reset_num_peices_in_cols();
     board.reset_board();
-    
+
     // AI move now if the human is player 2
     if (board.player == 1) {
         human_color = player1_color;
