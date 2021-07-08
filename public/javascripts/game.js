@@ -226,7 +226,7 @@ function new_game_peice(x, y, layer, stage) {
 
         let new_y_pos = get_y_coord(index_x);
 
-        if (board.num_peices_in_cols[index_x] >= 6) { // Column on the game board is full
+        if (board.num_peices_in_cols[index_x] >= board.height) { // Column on the game board is full
 
             // Return to original position
             circle.position({
