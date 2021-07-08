@@ -181,7 +181,7 @@ async function AI_move() {
             winner = res.win;
         },
         error: (error) => {
-            console.log('Error: ' + error);
+            show_error();
         }
     });
 
@@ -387,6 +387,39 @@ function restart_game() {
 
     // Make new player game peice on the right
     new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
+}
+
+function show_error() {
+    let text = new Konva.Text({
+        x: boardWidth / 4,
+        y: boardHeight / 2.5,
+        width: boardWidth / 2,
+        text: 'An error has occured. Please reload the page.',
+        fontSize: 50 / (7 / board.height),
+        fontFamily: 'Calibri',
+        fill: 'red',
+        padding: 20,
+        align: 'center'
+    });
+
+    var rect = new Konva.Rect({
+        x: boardWidth / 4,
+        y: boardHeight / 2.5,
+        stroke: '#555',
+        strokeWidth: 5,
+        fill: '#ddd',
+        width: boardWidth / 2,
+        height: text.height(),
+        shadowColor: 'black',
+        shadowBlur: 10,
+        shadowOffsetX: 10,
+        shadowOffsetY: 10,
+        shadowOpacity: 0.2,
+        cornerRadius: 10,
+    });
+
+    layer.add(rect);
+    layer.add(text);
 }
 
 main();
