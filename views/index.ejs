@@ -16,21 +16,23 @@
   <h1>
     <%= title %>
   </h1>
-  <p class="lead">Welcome to <%= title %>. Play Connect N VS an AI using the <a href="https://en.wikipedia.org/wiki/Negamax">Negamax</a> algorithm. Here you are allowed to play
-  with a board of variable size and can also choose the number of tokens you need to line up to win the game. The default
-  configuation is the same as Connect 4.</p>
+  <p class="lead">Welcome to <%= title %>. Play Connect N VS an AI using the <a
+        href="https://en.wikipedia.org/wiki/Negamax">Negamax</a> algorithm. Here you are allowed to play
+      with a board of variable size and can also choose the number of tokens you need to line up to win the game. The
+      default
+      configuation is the same as Connect 4.</p>
 
   <p><strong>Instructions:</strong> Drag the game peice on the right onto the board to play.</p>
 
-  <p><strong>Rules:</strong> The same as <a href="https://www.gamesver.com/the-rules-of-connect-4-according-to-m-bradley-hasbro/">Connect 4</a>.</p>
+  <p><strong>Rules:</strong> The same as <a
+      href="https://www.gamesver.com/the-rules-of-connect-4-according-to-m-bradley-hasbro/">Connect 4</a>.</p>
 
   <div class="my-3">
 
     <!-- Dropdown to select to play as player 1 or 2 -->
     <div class="my-2 input-group">
       <span class="input-group-text">Player Select</span>
-      <select id="player_select" class="form-select" aria-label="Player Select" 
-      onchange="restart_game()">
+      <select id="player_select" class="form-select" aria-label="Player Select" onchange="restart_game()">
         <option selected value="1">Player 1</option>
         <option value="2">Player 2</option>
       </select>
@@ -40,36 +42,46 @@
     <div class="row">
       <div class="col input-group my-2">
         <span class="input-group-text">Board Height</span>
-        <select id="board_height_select" class="col form-select" aria-label="Board Height Select" 
-        onchange="restart_game()">
-          <option selected value="6">6</option>
-          <% for(let i=7; i<=10; i++){ %>
+        <select id="board_height_select" class="col form-select" aria-label="Board Height Select"
+          onchange="restart_game()">
+          <% for(let i=2; i<=5; i++){ %>
             <option value="<%= i %>">
               <%= i %>
             </option>
             <% } %>
+              <option selected value="6">6</option>
+              <% for(let i=7; i<=12; i++){ %>
+                <option value="<%= i %>">
+                  <%= i %>
+                </option>
+                <% } %>
         </select>
       </div>
 
       <!-- Dropdowns to select the board width -->
       <div class="col input-group my-2">
         <span class="input-group-text">Board Width</span>
-        <select id="board_width_select" class="col form-select" aria-label="Board Width Select" 
-        onchange="restart_game()">
-          <option selected value="7">7</option>
-          <% for(let i=8; i<=12; i++){ %>
+        <select id="board_width_select" class="col form-select" aria-label="Board Width Select"
+          onchange="restart_game()">
+          <% for(let i=2; i<=6; i++){ %>
             <option value="<%= i %>">
               <%= i %>
             </option>
             <% } %>
+              <option selected value="7">7</option>
+              <% for(let i=8; i<=12; i++){ %>
+                <option value="<%= i %>">
+                  <%= i %>
+                </option>
+                <% } %>
         </select>
       </div>
 
       <!-- Dropdown to select the number of tokens to line up to win the game -->
       <div class="input-group my-2">
         <span class="input-group-text">Number of Tokens Lined up to Win</span>
-        <select id="num_tokens_select" class="col form-select" aria-label="Number of Tokens Lined up to Win Select" 
-        onchange="restart_game()">
+        <select id="num_tokens_select" class="col form-select" aria-label="Number of Tokens Lined up to Win Select"
+          onchange="restart_game()">
           <option selected value="3">3</option>
           <option selected value="4">4</option>
           <% for(let i=5; i<=7; i++){ %>

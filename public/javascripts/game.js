@@ -266,7 +266,7 @@ function new_game_peice(x, y, layer, stage) {
 
         // Tell server about placement so AI can take turn
         // Only if player has not already won
-        if (winner == 0)
+        if (winner == 0 && board.free_cols().length != 0)
             winner = await AI_move();
 
         if (winner != 0 || board.free_cols().length == 0) {
@@ -357,15 +357,6 @@ function restart_game() {
     let select = document.getElementById('player_select');
     board.player = parseInt(select.value);
 
-    if (board.player == 1) {
-        human_color = player1_color;
-        AI_color = player2_color;
-    } else {
-        AI_color = player1_color;
-        human_color = player2_color;
-        AI_move();
-    }
-
     select = document.getElementById('board_width_select');
     let num_cols = parseInt(select.value);
     board.width = num_cols;
@@ -383,6 +374,16 @@ function restart_game() {
     // Reset board state variables
     board.reset_num_peices_in_cols();
     board.reset_board();
+    
+    // AI move now if the human is player 2
+    if (board.player == 1) {
+        human_color = player1_color;
+        AI_color = player2_color;
+    } else {
+        AI_color = player1_color;
+        human_color = player2_color;
+        AI_move();
+    }
 
     // Make new player game peice on the right
     new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
