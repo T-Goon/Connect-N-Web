@@ -76,9 +76,8 @@ function reset_konva_board() {
 
     // Cache x locations of the placed circles
     x_locs = new Array();
-    for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / board.width) {
+    for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / board.width)
         x_locs.push(i);
-    }
 
     stage.width(boardWidth + 100);
     stage.height(boardHeight + 10);
@@ -110,13 +109,17 @@ function reset_konva_board() {
     }
 }
 
+function reset_x_locs() {
+    
+}
+
 /**
  * Gets the y coordinate of where a game peice should be placed on the board in a given row.
  * @param {int} index Index of the column to place a game peice in.
  * @returns y coordinate of where a game peice should be placed in a given row.
  */
 function get_y_coord(index) {
-    return circleRadius + 10 + (5 - board.num_peices_in_cols[index]) * circle_y_spacing;
+    return circleRadius + 10 + (board.height - 1 - board.num_peices_in_cols[index]) * circle_y_spacing;
 }
 
 /**
@@ -342,9 +345,6 @@ function new_game_peice(x, y, layer, stage) {
  * Resets the game state.
  */
 function restart_game() {
-    // Reset game state variables
-    board.reset_board();
-    board.reset_num_peices_in_cols();
 
     // Remove game peices from Konva layer
     layer.destroyChildren();
@@ -376,6 +376,10 @@ function restart_game() {
     board.num_win = num_win;
 
     reset_konva_board();
+
+    // Reset board state variables
+    board.reset_num_peices_in_cols();
+    board.reset_board();
 
     // Make new player game peice on the right
     new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);

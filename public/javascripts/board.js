@@ -17,7 +17,8 @@ class Board {
         this.board = null;
         this.reset_board();
 
-        this.num_peices_in_cols = new Array(this.width).fill(0); // num game peices in each column
+        this.num_peices_in_cols = null;
+        this.reset_num_peices_in_cols(); // num game peices in each column
     }
 
     /**
@@ -34,7 +35,7 @@ class Board {
      * Reset the logs for number of peices in each column of the board to 0.
      */
     reset_num_peices_in_cols() {
-        this.num_peices_in_cols = this.num_peices_in_cols.fill(0);
+        this.num_peices_in_cols = new Array(this.width).fill(0);
     }
 
     /**
