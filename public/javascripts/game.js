@@ -155,6 +155,9 @@ function new_opponent_token(x, y, layer) {
 async function AI_move() {
     const data = {
         board: board.board,
+        board_width: board.width,
+        board_height: board.height,
+        board_num_win: board.num_win,
         player: board.player
     };
 

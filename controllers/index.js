@@ -12,6 +12,10 @@ exports.make_move = (req, res, next) => {
     try {
         // Create new board with board sent by client
         const board = new Board(req.body.board);
+        board.width = req.body.board_width;
+        board.height = req.body.board_height;
+        board.num_win = req.body.board_num_win;
+        // Calculate which player the AI is
         board.player = (req.body.player % 2) + 1;
 
         // Create AI agent and make a move on the board
