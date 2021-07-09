@@ -2,7 +2,7 @@
 
 A web app where you can play Connect N, a varient of Connect 4, VS an AI using the Negamax algorithm. The app will allow the client to change the height and width of the board along with the number of game peices the players need to win the game.
 
-The app has been deployed: https://connect-n-web.herokuapp.com/
+The app has been deployed here: https://connect-n-web.herokuapp.com/
 
 ## Screenshots
 ![image](https://user-images.githubusercontent.com/32044950/125133018-33fef400-e0d3-11eb-88f4-522bfc73ec81.png)
