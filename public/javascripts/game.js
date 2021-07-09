@@ -11,13 +11,16 @@ const circleRadius = 34.5;
 
 var circle_y_spacing = null;
 
-var x_locs = []; // X coord of each column on game board
+var x_locs = []; // X coord of each column on Konva game board
 var board = new Board(7, 6);
 var negamax_depth = 6;
 const player1_color = 'red';
 const player2_color = 'black';
 var human_color = player1_color;
 var AI_color = player2_color;
+const human_turn_text = 'Your Turn';
+const AI_turn_text = 'Negamax is Thinking...';
+var is_human_turn = true;
 
 var stage = new Konva.Stage({
     container: 'game-container',
@@ -65,8 +68,27 @@ function main() {
     document.getElementById('board_height_select').value = '6';
     document.getElementById('num_tokens_select').value = '4';
     document.getElementById('negamax_depth_select').value = '6';
+    show_turn();
 }
 
+/**
+ * Changes a badge above the Konva div based on whether it is the AI's or the human's turn.
+ * @returns Nothing
+ */
+function show_turn() {
+    if (is_human_turn) {
+        $('#turn_span').text(human_turn_text);
+        $('#AI_thinking_spinner').hide();
+        return;
+    }
+
+    $('#turn_span').text(AI_turn_text);
+    $('#AI_thinking_spinner').show();
+}
+
+/**
+ * Reset the state of the Konva Connect 4 board based on game settings.
+ */
 function reset_konva_board() {
 
     boardHeight = 10 + (circleRadius * 2.5 * board.height);
@@ -176,6 +198,10 @@ async function AI_move() {
 
             // Check for AI win
             winner = res.win;
+
+            // Change UI to show it is now the human's turn
+            is_human_turn = true;
+            show_turn();
         },
         error: (error) => {
             show_error();
@@ -263,8 +289,13 @@ function new_game_peice(x, y, layer, stage) {
 
         // Tell server about placement so AI can take turn
         // Only if player has not already won
-        if (winner == 0 && board.free_cols().length != 0)
+        if (winner == 0 && board.free_cols().length != 0) {
+            // Change UI to show it is the AI's turn
+            is_human_turn = false;
+            show_turn();
+
             winner = await AI_move();
+        }
 
         if (winner != 0 || board.free_cols().length == 0) {
             // Show a message if the game has ended
@@ -389,6 +420,9 @@ function restart_game() {
     new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
 }
 
+/**
+ * Displays an error message on the game board if there is any errors.
+ */
 function show_error() {
     let text = new Konva.Text({
         x: boardWidth / 4,
