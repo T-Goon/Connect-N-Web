@@ -77,22 +77,44 @@
         </select>
       </div>
 
-      <p><strong class="text-danger">NOTE: </strong> Larger board widths require much more time for the Negamax AI to compute its move.</p>
-
       <!-- Dropdown to select the number of tokens to line up to win the game -->
       <div class="input-group my-2">
         <span class="input-group-text">Number of Tokens Lined up to Win</span>
-        <select id="num_tokens_select" class="col form-select" aria-label="Number of Tokens Lined up to Win Select"
+        <select id="num_tokens_select" class="form-select" aria-label="Number of Tokens Lined up to Win Select"
           onchange="restart_game()">
-          <option selected value="3">3</option>
+          <option value="3">3</option>
           <option selected value="4">4</option>
           <% for(let i=5; i<=7; i++){ %>
             <option value="<%= i %>">
               <%= i %>
             </option>
-            <% } %>
+            <% } %>s
         </select>
       </div>
+
+      <!-- Dropdown to select the max depth of the Negamax search -->
+      <div class="input-group my-2" data-bs-toggle="tooltip" data-bs-placement="top"
+        data-bs-original-title="How &quot;smart&quot; the AI is. Larger number => Smarter">
+        <span class="input-group-text">Negamax Max Depth</span>
+        <select id="num_tokens_select" class="form-select" aria-label="Negamax Max Depth Select"
+          onchange="restart_game()">
+          <% for(let i=1; i<=5; i++){ %>
+            <option value="<%= i %>">
+              <%= i %>
+            </option>
+            <% } %>
+              <option selected value="6">6</option>
+              <% for(let i=7; i<=10; i++){ %>
+                <option value="<%= i %>">
+                  <%= i %>
+                </option>
+                <% } %>
+        </select>
+      </div>
+
+      <p><strong class="text-danger">NOTE: </strong> Both larger values for <Strong>board width</Strong> and
+        <Strong>Negamax max depth</Strong> require
+        much more time for the Negamax AI to compute its move.</p>
 
     </div>
 
@@ -109,6 +131,13 @@
     crossorigin="anonymous"></script>
   <script type="text/javascript" src="/javascripts/board.js"></script>
   <script type="text/javascript" src="/javascripts/game.js"></script>
+  <!-- Enable tooltips -->
+  <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
 </body>
 
 </html>
