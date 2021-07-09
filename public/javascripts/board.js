@@ -14,20 +14,20 @@ class Board {
         this.num_win = 4;
         this.player = 1;
 
-        this.board = new Array();
-        for (let i = 0; i < this.height; i++) {
-            this.board.push(new Array(this.width).fill(0));
-        }
+        this.board = null;
+        this.reset_board();
 
-        this.num_peices_in_cols = new Array(this.width).fill(0); // num game peices in each column
+        this.num_peices_in_cols = null;
+        this.reset_num_peices_in_cols(); // num game peices in each column
     }
 
     /**
      * Reset all spaces on the board to 0.
      */
     reset_board() {
+        this.board = new Array();
         for (let i = 0; i < this.height; i++) {
-            this.board[i].fill(0);
+            this.board.push(new Array(this.width).fill(0));
         }
     }
 
@@ -35,7 +35,7 @@ class Board {
      * Reset the logs for number of peices in each column of the board to 0.
      */
     reset_num_peices_in_cols() {
-        this.num_peices_in_cols = this.num_peices_in_cols.fill(0);
+        this.num_peices_in_cols = new Array(this.width).fill(0);
     }
 
     /**
@@ -124,35 +124,5 @@ class Board {
                 free.push(i);
 
         return free;
-    }
-
-    /**
-     * Prints out a board to the terminal.
-     * For debugging only.
-     */
-    print_it() {
-        // '+----------+'
-        console.log('+' + '-'.repeat(this.width) + "+");
-
-        // Print numbers on the board
-        for (let y = this.height - 1; y > -1; y--) {
-            process.stdout.write('|');
-
-            for (let x = 0; x < this.width; x++) {
-                if (this.board[y][x] == 0) process.stdout.write(' ');
-                else process.stdout.write(this.board[y][x].toString());
-            }
-            console.log('|');
-        }
-
-        // '+----------+'
-        console.log('+' + '-'.repeat(this.width) + "+");
-        process.stdout.write(' ');
-
-        // Print column numbers
-        for (let i = 0; i < this.width; i++) {
-            process.stdout.write(i.toString());
-        }
-        console.log('');
     }
 }

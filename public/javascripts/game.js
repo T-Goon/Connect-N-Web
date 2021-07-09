@@ -4,21 +4,23 @@ var shadowOffset = 20;
 var tween = null;
 var blockSnapSize = 30;
 
-const boardWidth = 902;
-const boardHeight = 492;
+var boardWidth = null;
+var boardHeight = null;
 
+const circleRadius = 34.5;
+
+var circle_y_spacing = null;
+
+var x_locs = []; // X coord of each column on Konva game board
+var board = new Board(7, 6);
+var negamax_depth = 6;
 const player1_color = 'red';
 const player2_color = 'black';
 var human_color = player1_color;
 var AI_color = player2_color;
-
-const circleRadius = 34.5;
-
-const circle_y_spacing = boardHeight / 6;
-
-var x_locs = []; // X coord of each column on game board
-
-var board = new Board(7, 6);
+const human_turn_text = 'Your Turn';
+const AI_turn_text = 'Negamax is Thinking...';
+var is_human_turn = true;
 
 var stage = new Konva.Stage({
     container: 'game-container',
@@ -48,11 +50,61 @@ var shadowCircle = new Konva.Circle({
  */
 function main() {
 
-    // Cache x locations of the placed circles
-    for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / 7) {
-        x_locs.push(i);
+    reset_konva_board();
+
+    // Add circle to show snapping of peices to board columns
+    shadowCircle.hide();
+    shadow_layer.add(shadowCircle);
+
+    new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
+
+    stage.add(board_layer);
+    stage.add(shadow_layer);
+    stage.add(layer);
+
+    // Reset value of all variable UI elements
+    document.getElementById('player_select').value = '1';
+    document.getElementById('board_width_select').value = '7';
+    document.getElementById('board_height_select').value = '6';
+    document.getElementById('num_tokens_select').value = '4';
+    document.getElementById('negamax_depth_select').value = '6';
+    show_turn();
+}
+
+/**
+ * Changes a badge above the Konva div based on whether it is the AI's or the human's turn.
+ * @returns Nothing
+ */
+function show_turn() {
+    if (is_human_turn) {
+        $('#turn_span').text(human_turn_text);
+        $('#AI_thinking_spinner').hide();
+        return;
     }
 
+    $('#turn_span').text(AI_turn_text);
+    $('#AI_thinking_spinner').show();
+}
+
+/**
+ * Reset the state of the Konva Connect 4 board based on game settings.
+ */
+function reset_konva_board() {
+
+    boardHeight = 10 + (circleRadius * 2.5 * board.height);
+    boardWidth = 50 + (circleRadius * 3.5 * board.width);
+
+    circle_y_spacing = boardHeight / board.height;
+
+    // Cache x locations of the placed circles
+    x_locs = new Array();
+    for (let i = circleRadius + 25; i < boardWidth; i += boardWidth / board.width)
+        x_locs.push(i);
+
+    stage.width(boardWidth + 100);
+    stage.height(boardHeight + 10);
+
+    board_layer.destroyChildren();
     // Lines for board border
     board_layer.add(new Konva.Rect({
         x: 0,
@@ -65,8 +117,8 @@ function main() {
     }));
 
     // Empty circles for the game pieces on the board
-    for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / 6) {
-        for (let i = 0; i < 7; i++) {
+    for (let j = circleRadius + 10; j < boardHeight; j += boardHeight / board.height) {
+        for (let i = 0; i < board.width; i++) {
             board_layer.add(new Konva.Circle({
                 x: x_locs[i],
                 y: j,
@@ -77,19 +129,6 @@ function main() {
             }));
         }
     }
-
-    // Add circle to show snapping of peices to board columns
-    shadowCircle.hide();
-    shadow_layer.add(shadowCircle);
-
-    new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
-
-    stage.add(board_layer);
-    stage.add(shadow_layer);
-    stage.add(layer);
-
-    // Reset value of select element to player 1
-    document.getElementById("player_select").value = '1';
 }
 
 /**
@@ -98,7 +137,7 @@ function main() {
  * @returns y coordinate of where a game peice should be placed in a given row.
  */
 function get_y_coord(index) {
-    return circleRadius + 10 + (5 - board.num_peices_in_cols[index]) * circle_y_spacing;
+    return circleRadius + 10 + (board.height - 1 - board.num_peices_in_cols[index]) * circle_y_spacing;
 }
 
 /**
@@ -134,7 +173,11 @@ function new_opponent_token(x, y, layer) {
 async function AI_move() {
     const data = {
         board: board.board,
-        player: board.player
+        board_width: board.width,
+        board_height: board.height,
+        board_num_win: board.num_win,
+        player: board.player,
+        negamax_depth: negamax_depth
     };
 
     let winner = 0;
@@ -155,9 +198,13 @@ async function AI_move() {
 
             // Check for AI win
             winner = res.win;
+
+            // Change UI to show it is now the human's turn
+            is_human_turn = true;
+            show_turn();
         },
         error: (error) => {
-            console.log('Error: ' + error);
+            show_error();
         }
     });
 
@@ -205,7 +252,7 @@ function new_game_peice(x, y, layer, stage) {
 
         let new_y_pos = get_y_coord(index_x);
 
-        if (board.num_peices_in_cols[index_x] >= 6) { // Column on the game board is full
+        if (board.num_peices_in_cols[index_x] >= board.height) { // Column on the game board is full
 
             // Return to original position
             circle.position({
@@ -242,8 +289,13 @@ function new_game_peice(x, y, layer, stage) {
 
         // Tell server about placement so AI can take turn
         // Only if player has not already won
-        if (winner == 0)
+        if (winner == 0 && board.free_cols().length != 0) {
+            // Change UI to show it is the AI's turn
+            is_human_turn = false;
+            show_turn();
+
             winner = await AI_move();
+        }
 
         if (winner != 0 || board.free_cols().length == 0) {
             // Show a message if the game has ended
@@ -267,7 +319,7 @@ function new_game_peice(x, y, layer, stage) {
                 y: boardHeight / 2.5,
                 width: boardWidth / 2,
                 text: msg,
-                fontSize: 50,
+                fontSize: 50 / (7 / board.height),
                 fontFamily: 'Calibri',
                 fill: color,
                 padding: 20,
@@ -324,18 +376,37 @@ function new_game_peice(x, y, layer, stage) {
  * Resets the game state.
  */
 function restart_game() {
-    // Reset game state variables
-    board.reset_board();
-    board.reset_num_peices_in_cols();
 
     // Remove game peices from Konva layer
     layer.destroyChildren();
     stage.batchDraw();
 
     // Allows human to swap between player 1 and player 2
-    let select = document.getElementById("player_select");
-    board.player = parseInt(select.options[select.selectedIndex].value);
+    let select = document.getElementById('player_select');
+    board.player = parseInt(select.value);
 
+    select = document.getElementById('board_width_select');
+    let num_cols = parseInt(select.value);
+    board.width = num_cols;
+
+    select = document.getElementById('board_height_select');
+    let num_rows = parseInt(select.value);
+    board.height = num_rows;
+
+    select = document.getElementById('num_tokens_select');
+    let num_win = parseInt(select.value);
+    board.num_win = num_win;
+
+    select = document.getElementById('negamax_depth_select');
+    negamax_depth = parseInt(select.value);
+
+    reset_konva_board();
+
+    // Reset board state variables
+    board.reset_num_peices_in_cols();
+    board.reset_board();
+
+    // AI move now if the human is player 2
     if (board.player == 1) {
         human_color = player1_color;
         AI_color = player2_color;
@@ -347,6 +418,42 @@ function restart_game() {
 
     // Make new player game peice on the right
     new_game_peice(boardWidth + 50, boardHeight / 2, layer, stage);
+}
+
+/**
+ * Displays an error message on the game board if there is any errors.
+ */
+function show_error() {
+    let text = new Konva.Text({
+        x: boardWidth / 4,
+        y: boardHeight / 2.5,
+        width: boardWidth / 2,
+        text: 'An error has occured. Please reload the page.',
+        fontSize: 50 / (7 / board.height),
+        fontFamily: 'Calibri',
+        fill: 'red',
+        padding: 20,
+        align: 'center'
+    });
+
+    var rect = new Konva.Rect({
+        x: boardWidth / 4,
+        y: boardHeight / 2.5,
+        stroke: '#555',
+        strokeWidth: 5,
+        fill: '#ddd',
+        width: boardWidth / 2,
+        height: text.height(),
+        shadowColor: 'black',
+        shadowBlur: 10,
+        shadowOffsetX: 10,
+        shadowOffsetY: 10,
+        shadowOpacity: 0.2,
+        cornerRadius: 10,
+    });
+
+    layer.add(rect);
+    layer.add(text);
 }
 
 main();

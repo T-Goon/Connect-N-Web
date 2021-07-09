@@ -22,9 +22,13 @@ class Board {
      * @returns A deep copy of this board
      */
     copy() {
-        let copy = new Board(lodash.cloneDeep(this.board), this.width, this.height);
-
+        let copy = new Board(lodash.cloneDeep(this.board));
+        
+        copy.width = this.width;
+        copy.height = this.height;
+        copy.num_win = this.num_win;
         copy.player = this.player;
+        
         return copy;
     }
 
