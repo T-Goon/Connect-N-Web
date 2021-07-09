@@ -125,34 +125,4 @@ class Board {
 
         return free;
     }
-
-    /**
-     * Prints out a board to the terminal.
-     * For debugging only.
-     */
-    print_it() {
-        // '+----------+'
-        console.log('+' + '-'.repeat(this.width) + "+");
-
-        // Print numbers on the board
-        for (let y = this.height - 1; y > -1; y--) {
-            process.stdout.write('|');
-
-            for (let x = 0; x < this.width; x++) {
-                if (this.board[y][x] == 0) process.stdout.write(' ');
-                else process.stdout.write(this.board[y][x].toString());
-            }
-            console.log('|');
-        }
-
-        // '+----------+'
-        console.log('+' + '-'.repeat(this.width) + "+");
-        process.stdout.write(' ');
-
-        // Print column numbers
-        for (let i = 0; i < this.width; i++) {
-            process.stdout.write(i.toString());
-        }
-        console.log('');
-    }
 }
