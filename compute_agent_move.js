@@ -11,7 +11,7 @@ board.num_win = workerData.board_num_win;
 board.player = (workerData.player % 2) + 1;
 
 // Create AI agent and make a move on the board
-const alpha_beta_agent = new AlphaBetaAgent('AI', 6);
+const alpha_beta_agent = new AlphaBetaAgent('AI', workerData.negamax_depth);
 const move = alpha_beta_agent.go(board);
 board.add_token(move);
 

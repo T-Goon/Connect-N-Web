@@ -96,15 +96,15 @@
       <div class="input-group my-2" data-bs-toggle="tooltip" data-bs-placement="top"
         data-bs-original-title="How &quot;smart&quot; the AI is. Larger number => Smarter">
         <span class="input-group-text">Negamax Max Depth</span>
-        <select id="num_tokens_select" class="form-select" aria-label="Negamax Max Depth Select"
+        <select id="negamax_depth_select" class="form-select" aria-label="Negamax Max Depth Select"
           onchange="restart_game()">
-          <% for(let i=1; i<=5; i++){ %>
+          <% for(let i=2; i<=5; i++){ %>
             <option value="<%= i %>">
               <%= i %>
             </option>
             <% } %>
               <option selected value="6">6</option>
-              <% for(let i=7; i<=10; i++){ %>
+              <% for(let i=7; i<=7; i++){ %>
                 <option value="<%= i %>">
                   <%= i %>
                 </option>

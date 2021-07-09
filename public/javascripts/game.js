@@ -7,18 +7,17 @@ var blockSnapSize = 30;
 var boardWidth = null;
 var boardHeight = null;
 
-const player1_color = 'red';
-const player2_color = 'black';
-var human_color = player1_color;
-var AI_color = player2_color;
-
 const circleRadius = 34.5;
 
 var circle_y_spacing = null;
 
 var x_locs = []; // X coord of each column on game board
-
 var board = new Board(7, 6);
+var negamax_depth = 6;
+const player1_color = 'red';
+const player2_color = 'black';
+var human_color = player1_color;
+var AI_color = player2_color;
 
 var stage = new Konva.Stage({
     container: 'game-container',
@@ -65,6 +64,7 @@ function main() {
     document.getElementById('board_width_select').value = '7';
     document.getElementById('board_height_select').value = '6';
     document.getElementById('num_tokens_select').value = '4';
+    document.getElementById('negamax_depth_select').value = '6';
 }
 
 function reset_konva_board() {
@@ -158,7 +158,8 @@ async function AI_move() {
         board_width: board.width,
         board_height: board.height,
         board_num_win: board.num_win,
-        player: board.player
+        player: board.player,
+        negamax_depth: negamax_depth
     };
 
     let winner = 0;
@@ -368,6 +369,9 @@ function restart_game() {
     select = document.getElementById('num_tokens_select');
     let num_win = parseInt(select.value);
     board.num_win = num_win;
+
+    select = document.getElementById('negamax_depth_select');
+    negamax_depth = parseInt(select.value);
 
     reset_konva_board();
 
