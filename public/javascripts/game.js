@@ -59,7 +59,7 @@ function main() {
     stage.add(shadow_layer);
     stage.add(layer);
 
-    // Reset value of all dropdowns to default
+    // Reset value of all variable UI elements
     document.getElementById('player_select').value = '1';
     document.getElementById('board_width_select').value = '7';
     document.getElementById('board_height_select').value = '6';
@@ -107,10 +107,6 @@ function reset_konva_board() {
             }));
         }
     }
-}
-
-function reset_x_locs() {
-
 }
 
 /**

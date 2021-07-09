@@ -114,12 +114,21 @@
 
       <p><strong class="text-danger">NOTE: </strong> Both larger values for <Strong>board width</Strong> and
         <Strong>Negamax max depth</Strong> require
-        much more time for the Negamax AI to compute its move.</p>
+        much more time for the Negamax AI to compute its move.
+      </p>
 
     </div>
 
     <button class="my-2 btn btn-warning btn-md" type="button" onclick="restart_game()">Restart Game</button>
   </div>
+
+  <div class="row row-cols-auto">
+    <p class="h4 col"> <span id="turn_span" class="h1 badge rounded-pill bg-primary">Turn</span></p>
+    <div class="col spinner-grow text-primary" role="status">
+      <span class="visually-hidden">Thinking...</span>
+    </div>
+  </div>
+
 
   <!-- Div for Konva stage -->
   <div id="game-container"></div>
